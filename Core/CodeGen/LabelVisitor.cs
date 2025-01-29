@@ -12,11 +12,14 @@ internal class LabelVisitor : IVisitor
     public void Visit(ConditionalBlock block)
     {
         CountBlock(block);
+        block.True.Accept(this);
+        block.False.Accept(this);
     }
 
     public void Visit(SimpleBlock block)
     {
         CountBlock(block);
+        block.Next?.Accept(this);
     }
 
     public void Visit(EqualsBooleanExpression equalsBooleanExpression) { }

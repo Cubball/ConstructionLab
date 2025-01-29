@@ -12,6 +12,8 @@ internal class CodeGenVisitor(IReadOnlyDictionary<IBlock, string> labels) : IVis
     private readonly HashSet<IBlock> _seen = [];
     private readonly StringBuilder _sb = new();
 
+    public string Code => _sb.ToString();
+
     public void Visit(ConditionalBlock block)
     {
         if (AppendGoToIfAleadySeen(block))
