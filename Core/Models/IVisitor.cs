@@ -2,19 +2,19 @@ namespace Core.Models;
 
 internal interface IVisitor
 {
-    void Visit(ConditionalBlock conditionalBlock);
+    void Visit(ConditionalBlock block);
 
-    void Visit(EqualsBooleanExpression equalsBooleanExpression);
+    void Visit(EqualsBooleanExpression expression);
 
-    void Visit(LessBooleanExpression lessBooleanExpression);
+    void Visit(LessBooleanExpression expression);
 
-    void Visit(LiteralToVariableAssignmentStatement literalToVariableAssignmentStatement);
+    void Visit(LiteralToVariableAssignmentStatement statement);
 
-    void Visit(PrintToStdoutStatement printToStdoutStatement);
+    void Visit(PrintToStdoutStatement statement);
 
-    void Visit(ReadFromStdinStatement readFromStdinStatement);
+    void Visit(ReadFromStdinStatement statement);
 
-    void Visit(SimpleBlock simpleBlock);
+    void Visit(SimpleBlock block);
 
-    void Visit(VariableToVariableAssignmentStatement variableToVariableAssignmentStatement);
+    void Visit(VariableToVariableAssignmentStatement statement);
 }

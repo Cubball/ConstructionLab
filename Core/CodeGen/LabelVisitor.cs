@@ -2,20 +2,21 @@ using Core.Models;
 
 namespace Core.CodeGen;
 
-internal class ReferenceCountingVisitor : IVisitor
+internal class LabelVisitor : IVisitor
 {
-    private readonly Dictionary<IBlock, int> _counts = [];
+    private readonly HashSet<IBlock> _seen = [];
+    private readonly Dictionary<IBlock, string> _labels = [];
 
-    public IReadOnlyDictionary<IBlock, int> Counts => _counts;
+    public IReadOnlyDictionary<IBlock, string> Labels => _labels;
 
-    public void Visit(ConditionalBlock conditionalBlock)
+    public void Visit(ConditionalBlock block)
     {
-        CountBlock(conditionalBlock);
+        CountBlock(block);
     }
 
-    public void Visit(SimpleBlock simpleBlock)
+    public void Visit(SimpleBlock block)
     {
-        CountBlock(simpleBlock);
+        CountBlock(block);
     }
 
     public void Visit(EqualsBooleanExpression equalsBooleanExpression) { }
@@ -32,11 +33,12 @@ internal class ReferenceCountingVisitor : IVisitor
 
     private void CountBlock(IBlock block)
     {
-        if (!_counts.TryGetValue(block, out var count))
+        if (_seen.Add(block))
         {
-            _counts[block] = 0;
+            return;
         }
 
-        _counts[block] = count + 1;
+        var index = _labels.Count + 1;
+        _labels[block] = $"LABEL_{index}";
     }
 }
