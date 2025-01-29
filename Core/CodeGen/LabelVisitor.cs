@@ -45,8 +45,12 @@ internal class LabelVisitor : IVisitor
             return true;
         }
 
-        var index = _labels.Count + 1;
-        _labels[block] = $"LABEL_{index}";
+        if (!_labels.ContainsKey(block))
+        {
+            var index = _labels.Count + 1;
+            _labels[block] = $"LABEL_{index}";
+        }
+
         return false;
     }
 }
