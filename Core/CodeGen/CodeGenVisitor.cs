@@ -4,11 +4,13 @@ using Core.Models;
 
 namespace Core.CodeGen;
 
-internal class CodeGenVisitor(IReadOnlyDictionary<IBlock, string> labels) : IVisitor
+// TODO: appendline
+internal class CodeGenVisitor(
+    IReadOnlyDictionary<IBlock, string> labels,
+    string dicitonaryName) : IVisitor
 {
-    private const string ContextDicitonaryVariableName = "ctx";
-
     private readonly IReadOnlyDictionary<IBlock, string> _labels = labels;
+    private readonly string _dictionaryName = dicitonaryName;
     private readonly HashSet<IBlock> _seen = [];
     private readonly StringBuilder _sb = new();
 
@@ -33,28 +35,28 @@ internal class CodeGenVisitor(IReadOnlyDictionary<IBlock, string> labels) : IVis
 
     public void Visit(EqualsBooleanExpression expression)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{ContextDicitonaryVariableName}[\"{expression.Variable}\"] == {expression.Literal}");
+        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{expression.Variable}\"] == {expression.Literal}");
     }
 
     public void Visit(LessBooleanExpression expression)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{ContextDicitonaryVariableName}[\"{expression.Variable}\"] < {expression.Literal}");
+        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{expression.Variable}\"] < {expression.Literal}");
     }
 
     public void Visit(LiteralToVariableAssignmentStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{ContextDicitonaryVariableName}[\"{statement.Variable}\"] = {statement.Literal};\n");
+        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = {statement.Literal};\n");
     }
 
     public void Visit(PrintToStdoutStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"System.Console.WriteLine({ContextDicitonaryVariableName}[\"{statement.Variable}\"]);\n");
+        _sb.Append(CultureInfo.InvariantCulture, $"System.Console.WriteLine({_dictionaryName}[\"{statement.Variable}\"]);\n");
     }
 
     public void Visit(ReadFromStdinStatement statement)
     {
         // TODO: error handling
-        _sb.Append(CultureInfo.InvariantCulture, $"{ContextDicitonaryVariableName}[\"{statement.Variable}\"] = int.Parse(System.Console.ReadLine());\n");
+        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = int.Parse(System.Console.ReadLine());\n");
     }
 
     public void Visit(SimpleBlock block)
@@ -71,7 +73,7 @@ internal class CodeGenVisitor(IReadOnlyDictionary<IBlock, string> labels) : IVis
 
     public void Visit(VariableToVariableAssignmentStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{ContextDicitonaryVariableName}[\"{statement.LHS}\"] = {ContextDicitonaryVariableName}{statement.RHS};\n");
+        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.LHS}\"] = {_dictionaryName}{statement.RHS};\n");
     }
 
     private bool AppendGoToIfAleadySeen(IBlock block)
