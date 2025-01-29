@@ -1,7 +1,11 @@
 namespace Core.Models;
 
-internal record VariableToVariableAssignmentStatement(string LHS, int RHS) : IStatement
+internal class VariableToVariableAssignmentStatement : IStatement
 {
+    public required string LHS { get; init; }
+
+    public required string RHS { get; init; }
+
     public void Accept(IVisitor visitor)
     {
         visitor.Visit(this);

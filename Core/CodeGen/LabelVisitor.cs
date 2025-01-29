@@ -11,15 +11,19 @@ internal class LabelVisitor : IVisitor
 
     public void Visit(ConditionalBlock block)
     {
-        CountBlock(block);
-        block.True.Accept(this);
-        block.False.Accept(this);
+        if (FirstTimeSeeing(block))
+        {
+            block.True.Accept(this);
+            block.False.Accept(this);
+        }
     }
 
     public void Visit(SimpleBlock block)
     {
-        CountBlock(block);
-        block.Next?.Accept(this);
+        if (FirstTimeSeeing(block))
+        {
+            block.Next?.Accept(this);
+        }
     }
 
     public void Visit(EqualsBooleanExpression equalsBooleanExpression) { }
@@ -34,14 +38,15 @@ internal class LabelVisitor : IVisitor
 
     public void Visit(VariableToVariableAssignmentStatement variableToVariableAssignmentStatement) { }
 
-    private void CountBlock(IBlock block)
+    private bool FirstTimeSeeing(IBlock block)
     {
         if (_seen.Add(block))
         {
-            return;
+            return true;
         }
 
         var index = _labels.Count + 1;
         _labels[block] = $"LABEL_{index}";
+        return false;
     }
 }

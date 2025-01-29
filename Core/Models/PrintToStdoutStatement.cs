@@ -1,7 +1,9 @@
 namespace Core.Models;
 
-internal record PrintToStdoutStatement(string Variable) : IStatement
+internal class PrintToStdoutStatement : IStatement
 {
+    public required string Variable { get; init; }
+
     public void Accept(IVisitor visitor)
     {
         visitor.Visit(this);
