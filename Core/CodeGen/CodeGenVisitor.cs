@@ -73,7 +73,7 @@ internal class CodeGenVisitor(
 
     public void Visit(VariableToVariableAssignmentStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.LHS}\"] = {_dictionaryName}{statement.RHS};\n");
+        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.LHS}\"] = {_dictionaryName}[\"{statement.RHS}\"];\n");
     }
 
     private bool AppendGoToIfAleadySeen(IBlock block)

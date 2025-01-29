@@ -4,7 +4,7 @@ internal class LessBooleanExpression : IBooleanExpression
 {
     public required string Variable { get; init; }
 
-    public required string Literal { get; init; }
+    public required int Literal { get; init; }
 
     public void Accept(IVisitor visitor)
     {
