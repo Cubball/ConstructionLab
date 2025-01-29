@@ -4,7 +4,6 @@ using Core.Models;
 
 namespace Core.CodeGen;
 
-// TODO: appendline
 internal class CodeGenVisitor(
     IReadOnlyDictionary<IBlock, string> labels,
     string dicitonaryName) : IVisitor
@@ -26,11 +25,14 @@ internal class CodeGenVisitor(
         AppendLabelIfExists(block);
         _sb.Append("if (");
         block.Condition.Accept(this);
-        _sb.Append(")\n{\n");
+        _sb.AppendLine(")");
+        _sb.AppendLine("{");
         block.True.Accept(this);
-        _sb.Append("}\nelse\n{\n");
+        _sb.AppendLine("}");
+        _sb.AppendLine("else");
+        _sb.AppendLine("{");
         block.False.Accept(this);
-        _sb.Append("}\n");
+        _sb.AppendLine("}");
     }
 
     public void Visit(EqualsBooleanExpression expression)
@@ -45,18 +47,18 @@ internal class CodeGenVisitor(
 
     public void Visit(LiteralToVariableAssignmentStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = {statement.Literal};\n");
+        _sb.AppendLine(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = {statement.Literal};");
     }
 
     public void Visit(PrintToStdoutStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"System.Console.WriteLine({_dictionaryName}[\"{statement.Variable}\"]);\n");
+        _sb.AppendLine(CultureInfo.InvariantCulture, $"System.Console.WriteLine({_dictionaryName}[\"{statement.Variable}\"]);");
     }
 
     public void Visit(ReadFromStdinStatement statement)
     {
         // TODO: error handling
-        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = int.Parse(System.Console.ReadLine());\n");
+        _sb.AppendLine(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = int.Parse(System.Console.ReadLine());");
     }
 
     public void Visit(SimpleBlock block)
@@ -73,14 +75,14 @@ internal class CodeGenVisitor(
 
     public void Visit(VariableToVariableAssignmentStatement statement)
     {
-        _sb.Append(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.LHS}\"] = {_dictionaryName}[\"{statement.RHS}\"];\n");
+        _sb.AppendLine(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.LHS}\"] = {_dictionaryName}[\"{statement.RHS}\"];");
     }
 
     private bool AppendGoToIfAleadySeen(IBlock block)
     {
         if (!_seen.Add(block))
         {
-            _sb.Append(CultureInfo.InvariantCulture, $"goto {_labels[block]};\n");
+            _sb.AppendLine(CultureInfo.InvariantCulture, $"goto {_labels[block]};");
             return true;
         }
 
@@ -91,7 +93,7 @@ internal class CodeGenVisitor(
     {
         if (_labels.TryGetValue(block, out var label))
         {
-            _sb.Append(CultureInfo.InvariantCulture, $"{label}:\n");
+            _sb.AppendLine(CultureInfo.InvariantCulture, $"{label}:");
         }
     }
 }
