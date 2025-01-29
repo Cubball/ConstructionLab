@@ -17,4 +17,8 @@ internal interface IVisitor
     void Visit(SimpleBlock block);
 
     void Visit(VariableToVariableAssignmentStatement statement);
+
+    void Visit(StartBlock block);
+
+    void Visit(EndBlock block);
 }

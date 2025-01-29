@@ -9,7 +9,7 @@ internal class CodeGenerator
 {
     private const string DictionaryName = "dict";
 
-    public static string Generate(List<IVisitable> firstBlocks)
+    public static string Generate(List<StartBlock> firstBlocks)
     {
         var sb = new StringBuilder();
         sb.AppendLine($"var {DictionaryName} = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();");

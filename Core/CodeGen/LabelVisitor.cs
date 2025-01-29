@@ -38,6 +38,13 @@ internal class LabelVisitor : IVisitor
 
     public void Visit(VariableToVariableAssignmentStatement variableToVariableAssignmentStatement) { }
 
+    public void Visit(StartBlock block)
+    {
+        block.FirstBlock.Accept(this);
+    }
+
+    public void Visit(EndBlock block) { }
+
     private bool FirstTimeSeeing(IBlock block)
     {
         if (_seen.Add(block))

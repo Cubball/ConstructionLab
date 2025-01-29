@@ -78,6 +78,16 @@ internal class CodeGenVisitor(
         _sb.AppendLine(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.LHS}\"] = {_dictionaryName}[\"{statement.RHS}\"];");
     }
 
+    public void Visit(StartBlock block)
+    {
+        block.FirstBlock.Accept(this);
+    }
+
+    public void Visit(EndBlock block)
+    {
+        _sb.AppendLine("return;");
+    }
+
     private bool AppendGoToIfAleadySeen(IBlock block)
     {
         if (!_seen.Add(block))

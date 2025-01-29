@@ -62,4 +62,11 @@ internal class VariablesVisitor : IVisitor
         _variables.Add(statement.LHS);
         _variables.Add(statement.RHS);
     }
+
+    public void Visit(StartBlock block)
+    {
+        block.FirstBlock.Accept(this);
+    }
+
+    public void Visit(EndBlock block) { }
 }
