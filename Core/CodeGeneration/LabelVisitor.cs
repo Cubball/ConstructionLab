@@ -1,6 +1,6 @@
 using Core.Models;
 
-namespace Core.CodeGen;
+namespace Core.CodeGeneration;
 
 internal class LabelVisitor : IVisitor
 {

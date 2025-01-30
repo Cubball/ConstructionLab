@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using Core.Models;
 
-namespace Core.CodeGen;
+namespace Core.CodeGeneration;
 
 // TODO: public?
 internal class CodeGenerator
@@ -29,7 +29,7 @@ internal class CodeGenerator
 
         foreach (var block in startBlocks)
         {
-            var codeGenVisitor = new CodeGenVisitor(labelsVisitor.Labels, DictionaryName);
+            var codeGenVisitor = new CodeGeneratingVisitor(labelsVisitor.Labels, DictionaryName);
             block.Accept(codeGenVisitor);
             sb.AppendLine("new System.Threading.Thread(() => {");
             sb.Append(codeGenVisitor.Code);

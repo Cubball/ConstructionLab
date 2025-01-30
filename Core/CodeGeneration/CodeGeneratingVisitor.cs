@@ -2,9 +2,9 @@ using System.Globalization;
 using System.Text;
 using Core.Models;
 
-namespace Core.CodeGen;
+namespace Core.CodeGeneration;
 
-internal class CodeGenVisitor(
+internal class CodeGeneratingVisitor(
     IReadOnlyDictionary<IBlock, string> labels,
     string dicitonaryName) : IVisitor
 {

@@ -2,7 +2,7 @@ namespace Core.Models;
 
 internal class StartBlock : IVisitable
 {
-    public required IBlock FirstBlock { get; init; }
+    public IBlock FirstBlock { get; set; } = default!;
 
     public void Accept(IVisitor visitor)
     {
