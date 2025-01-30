@@ -54,7 +54,7 @@ internal class VariablesVisitor : IVisitor
         }
 
         block.Statement.Accept(this);
-        block.Next?.Accept(this);
+        block.Next.Accept(this);
     }
 
     public void Visit(VariableToVariableAssignmentStatement statement)

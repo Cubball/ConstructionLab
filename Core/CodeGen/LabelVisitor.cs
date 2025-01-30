@@ -22,7 +22,7 @@ internal class LabelVisitor : IVisitor
     {
         if (FirstTimeSeeing(block))
         {
-            block.Next?.Accept(this);
+            block.Next.Accept(this);
         }
     }
 

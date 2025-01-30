@@ -91,7 +91,7 @@ internal class SerializationVisitor(
         _sb.Append(nextId);
         _sb.Append(';');
 
-        block.Next?.Accept(this);
+        block.Next.Accept(this);
     }
 
     public void Visit(VariableToVariableAssignmentStatement statement)

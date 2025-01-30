@@ -21,7 +21,7 @@ internal class IdVisitor : IVisitor
     {
         if (AddIfFirstTimeSeeing(block))
         {
-            block.Next?.Accept(this);
+            block.Next.Accept(this);
         }
     }
 

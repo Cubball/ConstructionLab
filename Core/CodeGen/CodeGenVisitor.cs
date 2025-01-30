@@ -70,7 +70,7 @@ internal class CodeGenVisitor(
 
         AppendLabelIfExists(block);
         block.Statement.Accept(this);
-        block.Next?.Accept(this);
+        block.Next.Accept(this);
     }
 
     public void Visit(VariableToVariableAssignmentStatement statement)
