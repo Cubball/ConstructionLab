@@ -10,12 +10,13 @@ internal class BlockDeserializer
     private readonly Dictionary<Guid, IBlock> _blocks = [];
     private readonly Dictionary<IBlock, Guid> _nextIds = [];
     private readonly Dictionary<IBlock, (Guid True, Guid False)> _branchIds = [];
+    private readonly HashSet<IBlock> _seen = [];
 
     public StartBlock Deserialize(string serialized)
     {
-        var blocks = serialized.Split(BlocksSeparator);
+        var blocks = serialized.Split(BlocksSeparator, StringSplitOptions.RemoveEmptyEntries);
         var firstBlockId = DeserializeStartBlock(blocks[0]);
-        foreach (var block in blocks)
+        foreach (var block in blocks.AsSpan(1))
         {
             DeserializeBlock(block);
         }
@@ -26,7 +27,7 @@ internal class BlockDeserializer
     private Guid DeserializeStartBlock(string block)
     {
         var parts = block.Split(BlockPartsSeparator);
-        if (parts.Length != 2)
+        if (parts.Length != 3)
         {
             throw new SerializationException($"Serialized {nameof(StartBlock)} should have 2 parts");
         }
@@ -36,7 +37,7 @@ internal class BlockDeserializer
             throw new SerializationException($"Expected {nameof(StartBlock)}, got {parts[1]}");
         }
 
-        return ParseGuidOrThrow(parts[0]);
+        return ParseGuidOrThrow(parts[2]);
     }
 
     private void DeserializeBlock(string block)
@@ -44,6 +45,7 @@ internal class BlockDeserializer
         var parts = block.Split(BlockPartsSeparator);
         if (parts.Length < 2)
         {
+            Console.WriteLine(block);
             throw new SerializationException("Each serialized block should have at least 2 parts");
         }
 
@@ -74,6 +76,11 @@ internal class BlockDeserializer
         while (queue.Count > 0)
         {
             var block = queue.Dequeue();
+            if (!_seen.Add(block))
+            {
+                continue;
+            }
+
             switch (block)
             {
                 case StartBlock:
@@ -85,6 +92,7 @@ internal class BlockDeserializer
                     }
 
                     simpleBlock.Next = GetBlockByIdOrThrow(nextId);
+                    queue.Enqueue(simpleBlock.Next);
                     break;
                 case ConditionalBlock conditionalBlock:
                     if (!_branchIds.TryGetValue(conditionalBlock, out var branchIds))
@@ -94,6 +102,8 @@ internal class BlockDeserializer
 
                     conditionalBlock.True = GetBlockByIdOrThrow(branchIds.True);
                     conditionalBlock.False = GetBlockByIdOrThrow(branchIds.False);
+                    queue.Enqueue(conditionalBlock.True);
+                    queue.Enqueue(conditionalBlock.False);
                     break;
                 default:
                     break;
