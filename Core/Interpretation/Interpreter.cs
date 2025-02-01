@@ -13,7 +13,15 @@ internal class Interpreter
         foreach (var block in startBlocks)
         {
             var visitor = new InterpretingVisitor(variables, @out, @in);
-            new Thread(() => block.Accept(visitor)).Start();
+            block.Accept(visitor);
+            new Thread(() =>
+            {
+                while (!visitor.IsDone)
+                {
+                    visitor.Next();
+                }
+
+            }).Start();
         }
     }
 }
