@@ -14,7 +14,10 @@ internal class BlockDeserializer
 
     public StartBlock Deserialize(string serialized)
     {
-        var blocks = serialized.Split(BlocksSeparator, StringSplitOptions.RemoveEmptyEntries);
+        var blocks = serialized
+            .Split(BlocksSeparator)
+            .Where(static b => !string.IsNullOrWhiteSpace(b))
+            .ToArray();
         var firstBlockId = DeserializeStartBlock(blocks[0]);
         foreach (var block in blocks.AsSpan(1))
         {
@@ -45,7 +48,6 @@ internal class BlockDeserializer
         var parts = block.Split(BlockPartsSeparator);
         if (parts.Length < 2)
         {
-            Console.WriteLine(block);
             throw new SerializationException("Each serialized block should have at least 2 parts");
         }
 

@@ -23,8 +23,8 @@ internal class Serializer
 
     public static List<StartBlock> Deserialize(string serialized)
     {
-        var parts = serialized.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        return parts
+        return serialized.Split('\n')
+            .Where(static p => !string.IsNullOrWhiteSpace(p))
             .Select(static p => new BlockDeserializer().Deserialize(p))
             .ToList();
     }
