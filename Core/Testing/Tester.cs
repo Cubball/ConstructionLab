@@ -6,6 +6,10 @@ namespace Core.Testing;
 
 internal class Tester
 {
+    // TODO:
+    // have a list with 3 items in each tuple: sequence, in, out, return it afterwards
+    // also, make this method cancellable
+
     // TODO: async or what?
     public static void Test(List<StartBlock> startBlocks, TextWriter @out, TextReader @in)
     {
@@ -19,21 +23,17 @@ internal class Tester
                 var visitors = ReplayOperations(startBlocks, executedThreads, @out, @in);
                 var visitor = visitors[thread];
                 visitor.Next();
-                var newExecutedThreads = executedThreads.Append(thread).ToList();
-                List<int> newWorkingThreads;
-                if (visitor.IsDone)
+                var nextExecutedThreads = executedThreads.Append(thread).ToList();
+                var nextWorkingThreads = visitor.IsDone
+                    ? workingThreads.Where(t => t != thread).ToList()
+                    : [.. workingThreads];
+                if (nextWorkingThreads.Count > 0)
                 {
-                    Console.WriteLine($"thread {thread} done: sequence {string.Join(", ", newExecutedThreads)}");
-                    newWorkingThreads = workingThreads.Where(t => t != thread).ToList();
+                    queue.Enqueue((nextExecutedThreads, nextWorkingThreads));
                 }
                 else
                 {
-                    newWorkingThreads = [.. workingThreads];
-                }
-
-                if (workingThreads.Count > 0)
-                {
-                    queue.Enqueue((newExecutedThreads, newWorkingThreads));
+                    Console.WriteLine($"done: sequence {string.Join(", ", nextExecutedThreads)}");
                 }
             }
         }
@@ -49,7 +49,6 @@ internal class Tester
         var result = new List<InterpretingVisitor>(startBlocks.Count);
         foreach (var block in startBlocks)
         {
-            var signal = new AutoResetEvent(false);
             var visitor = new InterpretingVisitor(variables, @out, @in);
             result.Add(visitor);
             block.Accept(visitor);
