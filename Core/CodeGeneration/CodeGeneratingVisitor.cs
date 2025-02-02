@@ -57,7 +57,6 @@ internal sealed class CodeGeneratingVisitor(
 
     public void Visit(ReadFromStdinStatement statement)
     {
-        // TODO: error handling
         _sb.AppendLine(CultureInfo.InvariantCulture, $"{_dictionaryName}[\"{statement.Variable}\"] = int.Parse(System.Console.ReadLine());");
     }
 

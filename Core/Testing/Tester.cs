@@ -5,25 +5,26 @@ using Core.Validation;
 
 namespace Core.Testing;
 
-// TODO: separate file?
-public record struct ExecutionResult(List<int> ExecutedThreads, List<string> Output);
+internal record struct ExecutionResult(List<int> ExecutedThreads, List<string> Output);
 
 internal record struct ExecutionState(List<int> ExecutedThreads, List<int> WorkingThreads);
 
-internal record struct ThreadState(InterpretingVisitor Visitor, MockStdout Output);
+internal record struct ThreadsState(List<InterpretingVisitor> Visitor, MockStdout Output);
 
 public static class Tester
 {
-    public static Task<List<ExecutionResult>> Test(
+    public static async Task<TestingResult> Test(
         List<StartBlock> startBlocks,
+        List<string> stdout,
         List<string> stdin,
         CancellationToken cancellationToken = default)
     {
         Validator.Validate(startBlocks);
-        return Task.Run(() => TestInternal(startBlocks, stdin, cancellationToken));
+        var executionResults = await Task.Run(() => Test(startBlocks, stdin, cancellationToken));
+        return AnalyzeExecutionResults(executionResults, stdout);
     }
 
-    private static List<ExecutionResult> TestInternal(
+    private static List<ExecutionResult> Test(
         List<StartBlock> startBlocks,
         List<string> stdin,
         CancellationToken cancellationToken)
@@ -41,8 +42,8 @@ public static class Tester
                     return result;
                 }
 
-                var visitors = ReplayOperations(startBlocks, executedThreads, stdin);
-                var (visitor, stdout) = visitors[thread];
+                var (visitors, stdout) = ReplayOperations(startBlocks, executedThreads, stdin);
+                var visitor = visitors[thread];
                 visitor.Next();
                 var nextExecutedThreads = executedThreads.Append(thread).ToList();
                 var nextWorkingThreads = visitor.IsDone
@@ -59,27 +60,63 @@ public static class Tester
         return result;
     }
 
-    private static List<ThreadState> ReplayOperations(
+    private static ThreadsState ReplayOperations(
         List<StartBlock> startBlocks,
         List<int> executedThreads,
         List<string> stdin)
     {
         var variables = new ConcurrentDictionary<string, int>();
-        var result = new List<ThreadState>(startBlocks.Count);
+        var visitors = new List<InterpretingVisitor>(startBlocks.Count);
+        var mockStdout = new MockStdout();
+        var mockStdin = new MockStdin(stdin);
         foreach (var block in startBlocks)
         {
-            var stdout = new MockStdout();
-            var visitor = new InterpretingVisitor(variables, stdout, new MockStdin(stdin));
-            result.Add(new(visitor, stdout));
+            var visitor = new InterpretingVisitor(variables, mockStdout, mockStdin);
+            visitors.Add(visitor);
             block.Accept(visitor);
         }
 
         foreach (var thread in executedThreads)
         {
-            var (visitor, _) = result[thread];
+            var visitor = visitors[thread];
             visitor.Next();
         }
 
-        return result;
+        return new(visitors, mockStdout);
+    }
+
+    private static TestingResult AnalyzeExecutionResults(List<ExecutionResult> executionResults, List<string> expected)
+    {
+        var totalCounts = new Dictionary<int, int>();
+        var successCounts = new Dictionary<int, int>();
+        var maxExecutedSteps = 0;
+        foreach (var executionResult in executionResults)
+        {
+            var (executedThreads, output) = executionResult;
+            var executedSteps = executedThreads.Count;
+            maxExecutedSteps = Math.Max(maxExecutedSteps, executedSteps);
+            totalCounts[executedSteps] = totalCounts.GetValueOrDefault(executedSteps) + 1;
+            if (output.SequenceEqual(expected))
+            {
+                successCounts[executedSteps] = successCounts.GetValueOrDefault(executedSteps) + 1;
+            }
+        }
+
+        for (var i = 1; i < maxExecutedSteps; i++)
+        {
+            for (var j = i + 1; j <= maxExecutedSteps; j++)
+            {
+                totalCounts[j] = totalCounts.GetValueOrDefault(j) + totalCounts.GetValueOrDefault(i);
+                successCounts[j] = successCounts.GetValueOrDefault(j) + successCounts.GetValueOrDefault(i);
+            }
+        }
+
+        var result = new Dictionary<int, double>();
+        for (var i = 1; i <= maxExecutedSteps; i++)
+        {
+            result[i] = successCounts.GetValueOrDefault(i) * 100.0 / totalCounts[i];
+        }
+
+        return new(result, maxExecutedSteps);
     }
 }

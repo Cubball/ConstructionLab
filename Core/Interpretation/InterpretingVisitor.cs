@@ -58,7 +58,6 @@ internal sealed class InterpretingVisitor(
         _out.WriteLine(GetOrSetDefaultVariableValue(statement.Variable));
     }
 
-    // TODO: error handling
     public void Visit(ReadFromStdinStatement statement)
     {
         _variables[statement.Variable] = int.Parse(_in.ReadLine()!, CultureInfo.InvariantCulture);
