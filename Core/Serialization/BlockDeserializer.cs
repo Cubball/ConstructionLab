@@ -85,8 +85,6 @@ internal sealed class BlockDeserializer
 
             switch (block)
             {
-                case StartBlock:
-                    throw new SerializationException($"A {nameof(StartBlock)} cannot have any other blocks going into it");
                 case SimpleBlock simpleBlock:
                     if (!_nextIds.TryGetValue(simpleBlock, out var nextId))
                     {
