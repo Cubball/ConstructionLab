@@ -4,21 +4,42 @@ using Core.Models;
 
 namespace Core.Testing;
 
+// TODO: public, separate file?
+internal record struct ExecutionResult(List<int> ExecutedThreads, List<string> Output);
+
+internal record struct ExecutionState(List<int> ExecutedThreads, List<int> WorkingThreads);
+
+internal record struct ThreadState(InterpretingVisitor Visitor, MockStdout Output);
+
+// TODO: public?
 internal class Tester
 {
-    // TODO: async, cancellable
-    public static List<(List<int> ExecutedThreads, List<string> Output)> Test(
+    public static Task<List<ExecutionResult>> Test(
         List<StartBlock> startBlocks,
-        List<string> stdin)
+        List<string> stdin,
+        CancellationToken cancellationToken)
     {
-        var result = new List<(List<int>, List<string>)>();
-        var queue = new Queue<(List<int> ExecutedThreads, List<int> WorkingThreads)>();
-        queue.Enqueue(([], Enumerable.Range(0, startBlocks.Count).ToList()));
+        return Task.Run(() => TestInternal(startBlocks, stdin, cancellationToken));
+    }
+
+    private static List<ExecutionResult> TestInternal(
+        List<StartBlock> startBlocks,
+        List<string> stdin,
+        CancellationToken cancellationToken)
+    {
+        var result = new List<ExecutionResult>();
+        var queue = new Queue<ExecutionState>();
+        queue.Enqueue(new([], Enumerable.Range(0, startBlocks.Count).ToList()));
         while (queue.Count > 0)
         {
             var (executedThreads, workingThreads) = queue.Dequeue();
             foreach (var thread in workingThreads)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return result;
+                }
+
                 var visitors = ReplayOperations(startBlocks, executedThreads, stdin);
                 var (visitor, stdout) = visitors[thread];
                 visitor.Next();
@@ -26,10 +47,10 @@ internal class Tester
                 var nextWorkingThreads = visitor.IsDone
                     ? workingThreads.Where(t => t != thread).ToList()
                     : [.. workingThreads];
-                result.Add((nextExecutedThreads, stdout.Lines));
+                result.Add(new(nextExecutedThreads, stdout.Lines));
                 if (nextWorkingThreads.Count > 0)
                 {
-                    queue.Enqueue((nextExecutedThreads, nextWorkingThreads));
+                    queue.Enqueue(new(nextExecutedThreads, nextWorkingThreads));
                 }
             }
         }
@@ -37,18 +58,18 @@ internal class Tester
         return result;
     }
 
-    private static List<(InterpretingVisitor, MockStdout)> ReplayOperations(
+    private static List<ThreadState> ReplayOperations(
         List<StartBlock> startBlocks,
         List<int> executedThreads,
         List<string> stdin)
     {
         var variables = new ConcurrentDictionary<string, int>();
-        var result = new List<(InterpretingVisitor, MockStdout)>(startBlocks.Count);
+        var result = new List<ThreadState>(startBlocks.Count);
         foreach (var block in startBlocks)
         {
             var stdout = new MockStdout();
             var visitor = new InterpretingVisitor(variables, stdout, new MockStdin(stdin));
-            result.Add((visitor, stdout));
+            result.Add(new(visitor, stdout));
             block.Accept(visitor);
         }
 
