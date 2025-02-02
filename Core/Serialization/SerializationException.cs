@@ -1,3 +1,4 @@
 namespace Core.Serialization;
 
-public class SerializationException(string message) : Exception(message);
+// TODO: public?
+internal class SerializationException(string message) : Exception(message);
