@@ -16,7 +16,7 @@ internal class ValidatingVisitor : IVisitor
     public void Visit(ConditionalBlock block)
     {
         ThrowIfHaveNotSeenStartBlock(nameof(ConditionalBlock));
-        if (_blocks.Add(block))
+        if (!_blocks.Add(block))
         {
             return;
         }
@@ -74,7 +74,7 @@ internal class ValidatingVisitor : IVisitor
     public void Visit(SimpleBlock block)
     {
         ThrowIfHaveNotSeenStartBlock(nameof(ConditionalBlock));
-        if (_blocks.Add(block))
+        if (!_blocks.Add(block))
         {
             return;
         }
@@ -141,6 +141,11 @@ internal class ValidatingVisitor : IVisitor
         if (!char.IsLetter(variableName[0]) && variableName[0] != '_')
         {
             throw new ValidationException($"{propertyName} should start with a letter or underscore");
+        }
+
+        if (variableName.Any(char.IsWhiteSpace))
+        {
+            throw new ValidationException($"{propertyName} cannot contain whitespace");
         }
     }
 }
