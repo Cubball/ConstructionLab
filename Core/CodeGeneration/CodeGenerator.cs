@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Core.Models;
+using Core.Validation;
 
 namespace Core.CodeGeneration;
 
@@ -9,9 +10,9 @@ internal class CodeGenerator
 {
     private const string DictionaryName = "dict";
 
-    // TODO: check for amount of threads, blocks and variables
     public static string Generate(List<StartBlock> startBlocks)
     {
+        Validator.Validate(startBlocks);
         var sb = new StringBuilder();
         sb.AppendLine($"var {DictionaryName} = new System.Collections.Concurrent.ConcurrentDictionary<string, int>();");
         var variablesVisitor = new VariablesVisitor();

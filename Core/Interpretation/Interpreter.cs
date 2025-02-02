@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Core.Models;
+using Core.Validation;
 
 namespace Core.Interpretation;
 
@@ -7,6 +8,7 @@ internal class Interpreter
 {
     public static void Run(List<StartBlock> startBlocks, TextWriter? @out = null, TextReader? @in = null)
     {
+        Validator.Validate(startBlocks);
         @out ??= Console.Out;
         @in ??= Console.In;
         var variables = new ConcurrentDictionary<string, int>();

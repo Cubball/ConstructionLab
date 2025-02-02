@@ -1,5 +1,6 @@
 using System.Text;
 using Core.Models;
+using Core.Validation;
 
 namespace Core.Serialization;
 
@@ -8,6 +9,7 @@ internal class Serializer
 {
     public static string Serialize(List<StartBlock> startBlocks)
     {
+        Validator.Validate(startBlocks);
         var sb = new StringBuilder();
         foreach (var block in startBlocks)
         {

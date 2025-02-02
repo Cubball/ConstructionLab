@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Core.Interpretation;
 using Core.Models;
+using Core.Validation;
 
 namespace Core.Testing;
 
@@ -19,6 +20,7 @@ internal class Tester
         List<string> stdin,
         CancellationToken cancellationToken = default)
     {
+        Validator.Validate(startBlocks);
         return Task.Run(() => TestInternal(startBlocks, stdin, cancellationToken));
     }
 
