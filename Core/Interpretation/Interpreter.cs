@@ -16,9 +16,16 @@ internal class Interpreter
             block.Accept(visitor);
             new Thread(() =>
             {
-                while (!visitor.IsDone)
+                try
                 {
-                    visitor.Next();
+                    while (!visitor.IsDone)
+                    {
+                        visitor.Next();
+                    }
+                }
+                catch
+                {
+                    @out.WriteLine("An unexpected error occured");
                 }
 
             }).Start();

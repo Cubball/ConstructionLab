@@ -31,8 +31,16 @@ internal class CodeGenerator
         {
             var codeGenVisitor = new CodeGeneratingVisitor(labelsVisitor.Labels, DictionaryName);
             block.Accept(codeGenVisitor);
-            sb.AppendLine("new System.Threading.Thread(() => {");
+            sb.AppendLine("new System.Threading.Thread(() =>");
+            sb.AppendLine("{");
+            sb.AppendLine("try");
+            sb.AppendLine("{");
             sb.Append(codeGenVisitor.Code);
+            sb.AppendLine("}");
+            sb.AppendLine("catch");
+            sb.AppendLine("{");
+            sb.AppendLine("System.Console.WriteLine(\"An unexpected error occured\");");
+            sb.AppendLine("}");
             sb.AppendLine("}).Start();");
         }
 

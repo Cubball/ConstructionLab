@@ -13,4 +13,9 @@ internal class MockStdout : TextWriter
     {
         Lines.Add(value.ToString(CultureInfo.InvariantCulture));
     }
+
+    public override void WriteLine(string? value)
+    {
+        Lines.Add(value ?? string.Empty);
+    }
 }
