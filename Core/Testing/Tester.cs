@@ -26,15 +26,10 @@ internal class Tester
                 var nextWorkingThreads = visitor.IsDone
                     ? workingThreads.Where(t => t != thread).ToList()
                     : [.. workingThreads];
+                result.Add((nextExecutedThreads, stdout.Lines));
                 if (nextWorkingThreads.Count > 0)
                 {
                     queue.Enqueue((nextExecutedThreads, nextWorkingThreads));
-                }
-                else
-                {
-                    // add to result on each iter?
-                    result.Add((nextExecutedThreads, stdout.Lines));
-                    Console.WriteLine($"done: sequence {string.Join(", ", nextExecutedThreads)}");
                 }
             }
         }
