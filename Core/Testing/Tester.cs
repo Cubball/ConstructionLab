@@ -17,7 +17,7 @@ internal class Tester
     public static Task<List<ExecutionResult>> Test(
         List<StartBlock> startBlocks,
         List<string> stdin,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         return Task.Run(() => TestInternal(startBlocks, stdin, cancellationToken));
     }

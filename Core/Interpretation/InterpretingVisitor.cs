@@ -15,12 +15,21 @@ internal class InterpretingVisitor(
 
     private bool _lastBooleanExpression;
     private IBlock? _next;
+    private bool _errored;
 
-    public bool IsDone => _next is EndBlock;
+    public bool IsDone => _next is EndBlock || _errored;
 
     public void Next()
     {
-        _next?.Accept(this);
+        try
+        {
+            _next?.Accept(this);
+        }
+        catch
+        {
+            _errored = true;
+            _out.WriteLine("An unexpected error occured");
+        }
     }
 
     public void Visit(ConditionalBlock block)
