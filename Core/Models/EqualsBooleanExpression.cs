@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class EqualsBooleanExpression : IBooleanExpression
+public sealed class EqualsBooleanExpression : IBooleanExpression
 {
     public required string Variable { get; init; }
 

@@ -1,3 +1,3 @@
 namespace Core.Models;
 
-internal interface IBooleanExpression : IVisitable;
+public interface IBooleanExpression : IVisitable;

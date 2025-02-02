@@ -5,15 +5,14 @@ using Core.Validation;
 
 namespace Core.Testing;
 
-// TODO: public, separate file?
-internal record struct ExecutionResult(List<int> ExecutedThreads, List<string> Output);
+// TODO: separate file?
+public record struct ExecutionResult(List<int> ExecutedThreads, List<string> Output);
 
 internal record struct ExecutionState(List<int> ExecutedThreads, List<int> WorkingThreads);
 
 internal record struct ThreadState(InterpretingVisitor Visitor, MockStdout Output);
 
-// TODO: public?
-internal class Tester
+public static class Tester
 {
     public static Task<List<ExecutionResult>> Test(
         List<StartBlock> startBlocks,

@@ -1,6 +1,6 @@
 namespace Core.Testing;
 
-internal class MockStdin(List<string> lines) : TextReader
+internal sealed class MockStdin(List<string> lines) : TextReader
 {
     private readonly List<string> _lines = lines;
 

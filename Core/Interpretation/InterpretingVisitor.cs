@@ -4,7 +4,7 @@ using Core.Models;
 
 namespace Core.Interpretation;
 
-internal class InterpretingVisitor(
+internal sealed class InterpretingVisitor(
     ConcurrentDictionary<string, int> variables,
     TextWriter @out,
     TextReader @in) : IVisitor

@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.Serialization;
 
-internal class IdVisitor : IVisitor
+internal sealed class IdVisitor : IVisitor
 {
     private readonly Dictionary<IBlock, Guid> _ids = [];
 

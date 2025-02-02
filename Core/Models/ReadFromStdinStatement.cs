@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class ReadFromStdinStatement : IStatement
+public sealed class ReadFromStdinStatement : IStatement
 {
     public required string Variable { get; init; }
 

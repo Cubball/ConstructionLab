@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.Validation;
 
-internal class ValidatingVisitor : IVisitor
+internal sealed class ValidatingVisitor : IVisitor
 {
     private readonly HashSet<IBlock> _blocks = [];
     private readonly HashSet<string> _variables = [];

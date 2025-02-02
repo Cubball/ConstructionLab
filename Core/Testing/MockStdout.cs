@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Core.Testing;
 
-internal class MockStdout : TextWriter
+internal sealed class MockStdout : TextWriter
 {
     public List<string> Lines { get; } = [];
 

@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class LessBooleanExpression : IBooleanExpression
+public sealed class LessBooleanExpression : IBooleanExpression
 {
     public required string Variable { get; init; }
 

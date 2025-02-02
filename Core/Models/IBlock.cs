@@ -1,3 +1,3 @@
 namespace Core.Models;
 
-internal interface IBlock : IVisitable;
+public interface IBlock : IVisitable;

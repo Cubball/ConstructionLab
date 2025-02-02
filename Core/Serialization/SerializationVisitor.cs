@@ -3,7 +3,7 @@ using Core.Models;
 
 namespace Core.Serialization;
 
-internal class SerializationVisitor(
+internal sealed class SerializationVisitor(
     IReadOnlyDictionary<IBlock, Guid> ids) : IVisitor
 {
     private readonly IReadOnlyDictionary<IBlock, Guid> _ids = ids;

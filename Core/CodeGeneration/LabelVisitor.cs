@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.CodeGeneration;
 
-internal class LabelVisitor : IVisitor
+internal sealed class LabelVisitor : IVisitor
 {
     private readonly HashSet<IBlock> _seen = [];
     private readonly Dictionary<IBlock, string> _labels = [];

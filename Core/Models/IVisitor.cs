@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal interface IVisitor
+public interface IVisitor
 {
     void Visit(ConditionalBlock block);
 

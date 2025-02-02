@@ -1,4 +1,3 @@
 namespace Core.Validation;
 
-// TODO: public?
-internal class ValidationException(string message) : Exception(message);
+public sealed class ValidationException(string message) : Exception(message);

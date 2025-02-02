@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class StartBlock : IVisitable
+public sealed class StartBlock : IVisitable
 {
     public IBlock FirstBlock { get; set; } = default!;
 

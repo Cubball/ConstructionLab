@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class SimpleBlock : IBlock
+public sealed class SimpleBlock : IBlock
 {
     public required IStatement Statement { get; init; }
 

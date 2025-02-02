@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class ConditionalBlock : IBlock
+public sealed class ConditionalBlock : IBlock
 {
     public required IBooleanExpression Condition { get; init; }
 

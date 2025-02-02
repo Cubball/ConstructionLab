@@ -4,7 +4,7 @@ using Core.Validation;
 
 namespace Core.Interpretation;
 
-internal class Interpreter
+public static class Interpreter
 {
     public static void Run(List<StartBlock> startBlocks, TextWriter? @out = null, TextReader? @in = null)
     {

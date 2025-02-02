@@ -2,8 +2,7 @@ using Core.Models;
 
 namespace Core.Validation;
 
-// TODO: public?
-internal class Validator
+public static class Validator
 {
     private const int MaxDiagramsCount = 100;
     private const int MaxBlocksPerDiagramCount = 100;

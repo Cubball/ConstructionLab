@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.CodeGeneration;
 
-internal class VariablesVisitor : IVisitor
+internal sealed class VariablesVisitor : IVisitor
 {
     private readonly HashSet<IBlock> _seen = [];
     private readonly HashSet<string> _variables = [];

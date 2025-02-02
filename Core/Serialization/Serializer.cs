@@ -4,8 +4,7 @@ using Core.Validation;
 
 namespace Core.Serialization;
 
-// TODO: public
-internal class Serializer
+public static class Serializer
 {
     public static string Serialize(List<StartBlock> startBlocks)
     {

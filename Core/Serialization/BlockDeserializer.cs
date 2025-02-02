@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.Serialization;
 
-internal class BlockDeserializer
+internal sealed class BlockDeserializer
 {
     private const char BlocksSeparator = ';';
     private const char BlockPartsSeparator = ',';

@@ -4,7 +4,7 @@ using Core.Models;
 
 namespace Core.CodeGeneration;
 
-internal class CodeGeneratingVisitor(
+internal sealed class CodeGeneratingVisitor(
     IReadOnlyDictionary<IBlock, string> labels,
     string dicitonaryName) : IVisitor
 {

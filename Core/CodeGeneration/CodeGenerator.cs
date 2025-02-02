@@ -5,8 +5,7 @@ using Core.Validation;
 
 namespace Core.CodeGeneration;
 
-// TODO: public?
-internal class CodeGenerator
+public static class CodeGenerator
 {
     private const string DictionaryName = "dict";
 

@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class PrintToStdoutStatement : IStatement
+public sealed class PrintToStdoutStatement : IStatement
 {
     public required string Variable { get; init; }
 

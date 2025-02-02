@@ -1,6 +1,6 @@
 namespace Core.Models;
 
-internal class LiteralToVariableAssignmentStatement : IStatement
+public sealed class LiteralToVariableAssignmentStatement : IStatement
 {
     public required string Variable { get; init; }
 
