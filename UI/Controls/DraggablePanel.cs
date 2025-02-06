@@ -1,3 +1,5 @@
+using UI.Drawing;
+
 namespace UI.Controls;
 
 internal class DraggablePanel : Panel
@@ -9,18 +11,22 @@ internal class DraggablePanel : Panel
         DoubleBuffered = true;
         BackColor = Color.Fuchsia;
         // FIXME:
-        Controls.Add(new MovablePanel
+        var panel1 = new MovablePanel
         {
             Location = new(500, 500),
             Size = new(50, 50),
             BackColor = Color.White,
-        });
-        Controls.Add(new MovablePanel
+        };
+        Controls.Add(panel1);
+        var panel2 = new MovablePanel
         {
-            Location = new(2500, 2500),
-            Size = new(500, 500),
+            Location = new(600, 600),
+            Size = new(50, 50),
             BackColor = Color.White,
-        });
+        };
+        Controls.Add(panel2);
+        panel1.Move += (_, _) => Invalidate();
+        panel2.Move += (_, _) => Invalidate();
     }
 
     protected override void OnMouseDown(MouseEventArgs e)
@@ -45,5 +51,11 @@ internal class DraggablePanel : Panel
         newX = Math.Max(newX, parentSize.Width - Size.Width);
         newY = Math.Max(newY, parentSize.Height - Size.Height);
         Location = new(newX, newY);
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        base.OnPaint(e);
+        LineDrawer.Draw(new(20, 20), new(700, 300), this, e.Graphics);
     }
 }
