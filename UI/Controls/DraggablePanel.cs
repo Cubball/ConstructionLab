@@ -4,22 +4,21 @@ internal class DraggablePanel : Panel
 {
     private Point _startPoint;
 
-    public DraggablePanel(Size size)
+    public DraggablePanel()
     {
         DoubleBuffered = true;
-        Size = size;
         BackColor = Color.Fuchsia;
         // FIXME:
-        Controls.Add(new Panel
+        Controls.Add(new MovablePanel
         {
             Location = new(500, 500),
             Size = new(50, 50),
             BackColor = Color.White,
         });
-        Controls.Add(new Panel
+        Controls.Add(new MovablePanel
         {
             Location = new(2500, 2500),
-            Size = new(50, 50),
+            Size = new(500, 500),
             BackColor = Color.White,
         });
     }
