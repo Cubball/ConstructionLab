@@ -30,6 +30,16 @@ internal class EndBlock : Panel
                 ArrowsManager.SelectedOrigin.Destination = Destination;
             }
         };
+
+        var label = new Label
+        {
+            TextAlign = ContentAlignment.MiddleCenter,
+            Text = "End",
+            Font = new(Font.FontFamily, 14),
+            Size = new(280, 30),
+            Location = new(10, 85),
+        };
+        Controls.Add(label);
     }
 
     public ArrowDestination Destination { get; }

@@ -25,6 +25,16 @@ internal class StartBlock : Panel
         };
         Controls.Add(nextLabel);
         nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = NextArrow;
+
+        var label = new Label
+        {
+            TextAlign = ContentAlignment.MiddleCenter,
+            Text = "Start",
+            Font = new(Font.FontFamily, 14),
+            Size = new(280, 30),
+            Location = new(10, 85),
+        };
+        Controls.Add(label);
     }
 
     public static bool Exists { get; private set; }
