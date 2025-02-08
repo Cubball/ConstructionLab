@@ -1,4 +1,6 @@
+using UI.Components;
 using UI.Drawing;
+using UI.State;
 
 namespace UI.Controls;
 
@@ -10,23 +12,25 @@ internal class DraggablePanel : Panel
     {
         DoubleBuffered = true;
         BackColor = Color.Fuchsia;
+        ArrowsManager.ArrowsChanged += (_, _) => Invalidate();
+
         // FIXME:
-        var panel1 = new MovablePanel
+        var cond = new ConditionalBlock(new(100, 100));
+        Controls.Add(cond);
+    }
+
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
+    }
+
+    protected override void OnMouseClick(MouseEventArgs e)
+    {
+        base.OnMouseClick(e);
+        if (ArrowsManager.SelectedOrigin is not null)
         {
-            Location = new(500, 500),
-            Size = new(50, 50),
-            BackColor = Color.White,
-        };
-        Controls.Add(panel1);
-        var panel2 = new MovablePanel
-        {
-            Location = new(600, 600),
-            Size = new(50, 50),
-            BackColor = Color.White,
-        };
-        Controls.Add(panel2);
-        panel1.Move += (_, _) => Invalidate();
-        panel2.Move += (_, _) => Invalidate();
+            ArrowsManager.SelectedOrigin.Destination = new(e.Location);
+        }
     }
 
     protected override void OnMouseDown(MouseEventArgs e)
@@ -56,6 +60,12 @@ internal class DraggablePanel : Panel
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        LineDrawer.Draw(new(20, 20), new(700, 300), this, e.Graphics);
+        foreach (var origin in ArrowsManager.GetOrigins())
+        {
+            if (origin.Destination is not null)
+            {
+                LineDrawer.Draw(origin.Location, origin.Destination.Location, this, e.Graphics);
+            }
+        }
     }
 }

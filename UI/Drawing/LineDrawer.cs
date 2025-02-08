@@ -19,20 +19,14 @@ internal static class LineDrawer
                 break;
             }
 
-            var left = GetNextPoint(current, -StepInPixels, 0, to);
-            var top = GetNextPoint(current, 0, StepInPixels, to);
+            var bottom = GetNextPoint(current, 0, StepInPixels, to);
             var right = GetNextPoint(current, StepInPixels, 0, to);
-            var bottom = GetNextPoint(current, 0, -StepInPixels, to);
-            if (WithinControl(left, canvas) && !previous.ContainsKey(left) && !IntersectsChild(left, canvas, to))
+            var top = GetNextPoint(current, 0, -StepInPixels, to);
+            var left = GetNextPoint(current, -StepInPixels, 0, to);
+            if (WithinControl(bottom, canvas) && !previous.ContainsKey(bottom) && !IntersectsChild(bottom, canvas, to))
             {
-                queue.Enqueue(left);
-                previous[left] = current;
-            }
-
-            if (WithinControl(top, canvas) && !previous.ContainsKey(top) && !IntersectsChild(top, canvas, to))
-            {
-                queue.Enqueue(top);
-                previous[top] = current;
+                queue.Enqueue(bottom);
+                previous[bottom] = current;
             }
 
             if (WithinControl(right, canvas) && !previous.ContainsKey(right) && !IntersectsChild(right, canvas, to))
@@ -41,10 +35,16 @@ internal static class LineDrawer
                 previous[right] = current;
             }
 
-            if (WithinControl(bottom, canvas) && !previous.ContainsKey(bottom) && !IntersectsChild(bottom, canvas, to))
+            if (WithinControl(top, canvas) && !previous.ContainsKey(top) && !IntersectsChild(top, canvas, to))
             {
-                queue.Enqueue(bottom);
-                previous[bottom] = current;
+                queue.Enqueue(top);
+                previous[top] = current;
+            }
+
+            if (WithinControl(left, canvas) && !previous.ContainsKey(left) && !IntersectsChild(left, canvas, to))
+            {
+                queue.Enqueue(left);
+                previous[left] = current;
             }
         }
 
