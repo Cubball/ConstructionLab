@@ -1,4 +1,5 @@
 using System.Drawing.Drawing2D;
+using UI.Controls;
 using UI.Models;
 using UI.State;
 
@@ -9,6 +10,7 @@ internal class ConditionalBlock : Panel
     private readonly ArrowOrigin _trueArrow;
     private readonly ArrowOrigin _falseArrow;
     private readonly ArrowDestination _destination;
+    private readonly Label _operationLabel;
 
     public ConditionalBlock(Point location)
     {
@@ -34,6 +36,16 @@ internal class ConditionalBlock : Panel
                 ArrowsManager.SelectedOrigin.Destination = _destination;
             }
         };
+
+        _operationLabel = new Label
+        {
+            TextAlign = ContentAlignment.MiddleCenter,
+            Text = Operation,
+            Font = new(Font.FontFamily, 14),
+            Size = new(200, 30),
+            Location = new(50, 80),
+        };
+        Controls.Add(_operationLabel);
 
         _trueArrow = new(new(Location.X + 150, Location.Y + 200));
         ArrowsManager.AddOrigin(_trueArrow);
@@ -62,10 +74,24 @@ internal class ConditionalBlock : Panel
         addFalseLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _falseArrow;
     }
 
+    public string Operation { get; set; } = string.Empty;
+
     public void RemoveOrigins()
     {
         ArrowsManager.RemoveOrigin(_trueArrow);
         ArrowsManager.RemoveOrigin(_falseArrow);
+    }
+
+    protected override void OnMouseClick(MouseEventArgs e)
+    {
+        using var dialog = new BlockDialogForm(initialText: Operation);
+        dialog.OperationEntered += (_, operation) => SetOperation(operation);
+        dialog.BlockDeleted += (_, _) =>
+        {
+            Parent?.Controls.Remove(this);
+            RemoveOrigins();
+        };
+        dialog.ShowDialog();
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -83,5 +109,11 @@ internal class ConditionalBlock : Panel
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
         using var pen = new Pen(Color.Black, 3);
         e.Graphics.DrawPath(pen, path);
+    }
+
+    private void SetOperation(string operation)
+    {
+        Operation = operation;
+        _operationLabel.Text = operation;
     }
 }

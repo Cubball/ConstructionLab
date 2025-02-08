@@ -1,4 +1,5 @@
 using System.Drawing.Drawing2D;
+using UI.Controls;
 using UI.Models;
 using UI.State;
 
@@ -32,6 +33,13 @@ internal class EndBlock : Panel
                 ArrowsManager.SelectedOrigin.Destination = _destination;
             }
         };
+    }
+
+    protected override void OnMouseClick(MouseEventArgs e)
+    {
+        using var dialog = new BlockDialogForm(true);
+        dialog.BlockDeleted += (_, _) => Parent?.Controls.Remove(this);
+        dialog.ShowDialog();
     }
 
     protected override void OnPaint(PaintEventArgs e)

@@ -16,11 +16,13 @@ internal class DraggablePanel : Panel
 
         // FIXME:
         var cond1 = new ConditionalBlock(new(100, 100));
-        var cond2 = new EndBlock(new(100, 700));
-        var cond3 = new ConditionalBlock(new(500, 500));
+        var cond2 = new SimpleBlock(new(100, 700));
+        var cond3 = new EndBlock(new(1500, 500));
+        var cond4 = new StartBlock(new(1000, 500));
         Controls.Add(cond1);
         Controls.Add(cond2);
         Controls.Add(cond3);
+        Controls.Add(cond4);
     }
 
     protected override void OnClick(EventArgs e)
