@@ -1,8 +1,10 @@
 namespace UI.Models;
 
-internal record ArrowOrigin(Point Location)
+internal class ArrowOrigin(Point location)
 {
     private ArrowDestination? _destination;
+
+    public Point Location { get; set; } = location;
 
     public ArrowDestination? Destination
     {
