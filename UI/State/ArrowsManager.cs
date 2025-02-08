@@ -5,6 +5,7 @@ namespace UI.State;
 internal static class ArrowsManager
 {
     private static readonly List<ArrowOrigin> Origins = [];
+    private static readonly Dictionary<ArrowDestination, object> Destinations = [];
 
     public static ArrowOrigin? SelectedOrigin { get; set; }
 
@@ -27,6 +28,17 @@ internal static class ArrowsManager
     public static IReadOnlyList<ArrowOrigin> GetOrigins()
     {
         return Origins;
+    }
+
+    // TODO: type
+    public static void AddDestination(ArrowDestination destination, object control)
+    {
+        Destinations[destination] = control;
+    }
+
+    public static object? GetDestination(ArrowDestination destination)
+    {
+        return Destinations.GetValueOrDefault(destination);
     }
 
     private static void HandleDestinationChanged(object? sender, EventArgs e)

@@ -16,7 +16,7 @@ internal class DraggablePanel : Panel
 
         // FIXME:
         var cond1 = new ConditionalBlock(new(100, 100));
-        var cond2 = new ConditionalBlock(new(100, 700));
+        var cond2 = new EndBlock(new(100, 700));
         var cond3 = new ConditionalBlock(new(500, 500));
         Controls.Add(cond1);
         Controls.Add(cond2);
