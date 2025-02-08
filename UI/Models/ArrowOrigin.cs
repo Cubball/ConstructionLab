@@ -16,6 +16,10 @@ internal record ArrowOrigin(Point Location)
 
             _destination = value;
             DestinationChanged?.Invoke(this, EventArgs.Empty);
+            if (value is not null)
+            {
+                value.Origin = this;
+            }
         }
     }
 

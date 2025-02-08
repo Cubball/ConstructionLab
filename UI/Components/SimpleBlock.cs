@@ -6,8 +6,6 @@ namespace UI.Components;
 
 internal class SimpleBlock : Panel
 {
-    private readonly ArrowOrigin _nextArrow;
-    private readonly ArrowDestination _destination;
     private readonly Label _operationLabel;
 
     public SimpleBlock(Point location)
@@ -16,8 +14,8 @@ internal class SimpleBlock : Panel
         Size = new(300, 200);
         BackColor = Color.White;
 
-        _destination = new(new(Location.X + 150, Location.Y));
-        ArrowsManager.AddDestination(_destination, this);
+        Destination = new(new(Location.X + 150, Location.Y));
+        ArrowsManager.AddDestination(Destination, this);
         var destinationLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -31,7 +29,7 @@ internal class SimpleBlock : Panel
         {
             if (ArrowsManager.SelectedOrigin is not null)
             {
-                ArrowsManager.SelectedOrigin.Destination = _destination;
+                ArrowsManager.SelectedOrigin.Destination = Destination;
             }
         };
 
@@ -45,8 +43,8 @@ internal class SimpleBlock : Panel
         };
         Controls.Add(_operationLabel);
 
-        _nextArrow = new(new(Location.X + 150, Location.Y + 200));
-        ArrowsManager.AddOrigin(_nextArrow);
+        NextArrow = new(new(Location.X + 150, Location.Y + 200));
+        ArrowsManager.AddOrigin(NextArrow);
         var nextLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -56,14 +54,18 @@ internal class SimpleBlock : Panel
             Location = new(135, 155),
         };
         Controls.Add(nextLabel);
-        nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _nextArrow;
+        nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = NextArrow;
     }
 
     public string Operation { get; set; } = string.Empty;
 
+    public ArrowOrigin NextArrow { get; }
+
+    public ArrowDestination Destination { get; }
+
     public void RemoveOrigins()
     {
-        ArrowsManager.RemoveOrigin(_nextArrow);
+        ArrowsManager.RemoveOrigin(NextArrow);
     }
 
     protected override void OnMouseClick(MouseEventArgs e)

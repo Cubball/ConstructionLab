@@ -6,8 +6,6 @@ namespace UI.Components;
 
 internal class StartBlock : Panel
 {
-    private readonly ArrowOrigin _nextArrow;
-
     public StartBlock(Point location)
     {
         Exists = true;
@@ -15,8 +13,8 @@ internal class StartBlock : Panel
         Size = new(300, 200);
         BackColor = Color.White;
 
-        _nextArrow = new(new(Location.X + 150, Location.Y + 200));
-        ArrowsManager.AddOrigin(_nextArrow);
+        NextArrow = new(new(Location.X + 150, Location.Y + 200));
+        ArrowsManager.AddOrigin(NextArrow);
         var nextLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -26,14 +24,16 @@ internal class StartBlock : Panel
             Location = new(135, 155),
         };
         Controls.Add(nextLabel);
-        nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _nextArrow;
+        nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = NextArrow;
     }
 
     public static bool Exists { get; private set; }
 
+    public ArrowOrigin NextArrow { get; }
+
     public void RemoveOrigins()
     {
-        ArrowsManager.RemoveOrigin(_nextArrow);
+        ArrowsManager.RemoveOrigin(NextArrow);
     }
 
     protected override void OnMouseClick(MouseEventArgs e)

@@ -6,16 +6,14 @@ namespace UI.Components;
 
 internal class EndBlock : Panel
 {
-    private readonly ArrowDestination _destination;
-
     public EndBlock(Point location)
     {
         Location = location;
         Size = new(300, 200);
         BackColor = Color.White;
 
-        _destination = new(new(Location.X + 150, Location.Y));
-        ArrowsManager.AddDestination(_destination, this);
+        Destination = new(new(Location.X + 150, Location.Y));
+        ArrowsManager.AddDestination(Destination, this);
         var destinationLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -29,10 +27,12 @@ internal class EndBlock : Panel
         {
             if (ArrowsManager.SelectedOrigin is not null)
             {
-                ArrowsManager.SelectedOrigin.Destination = _destination;
+                ArrowsManager.SelectedOrigin.Destination = Destination;
             }
         };
     }
+
+    public ArrowDestination Destination { get; }
 
     protected override void OnMouseClick(MouseEventArgs e)
     {
@@ -40,7 +40,7 @@ internal class EndBlock : Panel
         dialog.BlockDeleted += (_, _) =>
         {
             Parent?.Controls.Remove(this);
-            ArrowsManager.RemoveDestination(_destination);
+            ArrowsManager.RemoveDestination(Destination);
         };
         dialog.ShowDialog();
     }

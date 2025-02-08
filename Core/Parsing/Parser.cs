@@ -2,7 +2,7 @@ using Core.Models;
 
 namespace Core.Parsing;
 
-internal static class Parser
+public static class Parser
 {
     private const string InputStart = "INPUT ";
     private const string PrintStart = "PRINT ";

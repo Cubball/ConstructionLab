@@ -6,9 +6,6 @@ namespace UI.Components;
 
 internal class ConditionalBlock : Panel
 {
-    private readonly ArrowOrigin _trueArrow;
-    private readonly ArrowOrigin _falseArrow;
-    private readonly ArrowDestination _destination;
     private readonly Label _operationLabel;
 
     public ConditionalBlock(Point location)
@@ -17,8 +14,8 @@ internal class ConditionalBlock : Panel
         Size = new(300, 200);
         BackColor = Color.White;
 
-        _destination = new(new(Location.X + 150, Location.Y));
-        ArrowsManager.AddDestination(_destination, this);
+        Destination = new(new(Location.X + 150, Location.Y));
+        ArrowsManager.AddDestination(Destination, this);
         var destinationLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -32,7 +29,7 @@ internal class ConditionalBlock : Panel
         {
             if (ArrowsManager.SelectedOrigin is not null)
             {
-                ArrowsManager.SelectedOrigin.Destination = _destination;
+                ArrowsManager.SelectedOrigin.Destination = Destination;
             }
         };
 
@@ -46,8 +43,8 @@ internal class ConditionalBlock : Panel
         };
         Controls.Add(_operationLabel);
 
-        _trueArrow = new(new(Location.X + 150, Location.Y + 200));
-        ArrowsManager.AddOrigin(_trueArrow);
+        TrueArrow = new(new(Location.X + 150, Location.Y + 200));
+        ArrowsManager.AddOrigin(TrueArrow);
         var addTrueLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -57,10 +54,10 @@ internal class ConditionalBlock : Panel
             Location = new(135, 155),
         };
         Controls.Add(addTrueLabel);
-        addTrueLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _trueArrow;
+        addTrueLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = TrueArrow;
 
-        _falseArrow = new(new(Location.X + 300, Location.Y + 100));
-        ArrowsManager.AddOrigin(_falseArrow);
+        FalseArrow = new(new(Location.X + 300, Location.Y + 100));
+        ArrowsManager.AddOrigin(FalseArrow);
         var addFalseLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -70,15 +67,21 @@ internal class ConditionalBlock : Panel
             Location = new(245, 85),
         };
         Controls.Add(addFalseLabel);
-        addFalseLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _falseArrow;
+        addFalseLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = FalseArrow;
     }
 
     public string Operation { get; set; } = string.Empty;
 
+    public ArrowOrigin TrueArrow { get; }
+
+    public ArrowOrigin FalseArrow { get; }
+
+    public ArrowDestination Destination { get; }
+
     public void RemoveOrigins()
     {
-        ArrowsManager.RemoveOrigin(_trueArrow);
-        ArrowsManager.RemoveOrigin(_falseArrow);
+        ArrowsManager.RemoveOrigin(TrueArrow);
+        ArrowsManager.RemoveOrigin(FalseArrow);
     }
 
     protected override void OnMouseClick(MouseEventArgs e)
