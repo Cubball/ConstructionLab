@@ -1,7 +1,3 @@
-using UI.Components;
-using UI.Drawing;
-using UI.State;
-
 namespace UI.Controls;
 
 internal class DraggablePanel : Panel
@@ -11,23 +7,6 @@ internal class DraggablePanel : Panel
     public DraggablePanel()
     {
         DoubleBuffered = true;
-        BackColor = Color.Fuchsia;
-        ArrowsManager.ArrowsChanged += (_, _) => Invalidate();
-
-        // FIXME:
-        var cond1 = new ConditionalBlock(new(100, 100));
-        var cond2 = new SimpleBlock(new(100, 700));
-        var cond3 = new EndBlock(new(1500, 500));
-        var cond4 = new StartBlock(new(1000, 500));
-        Controls.Add(cond1);
-        Controls.Add(cond2);
-        Controls.Add(cond3);
-        Controls.Add(cond4);
-    }
-
-    protected override void OnClick(EventArgs e)
-    {
-        base.OnClick(e);
     }
 
     protected override void OnMouseDown(MouseEventArgs e)
@@ -52,17 +31,5 @@ internal class DraggablePanel : Panel
         newX = Math.Max(newX, parentSize.Width - Size.Width);
         newY = Math.Max(newY, parentSize.Height - Size.Height);
         Location = new(newX, newY);
-    }
-
-    protected override void OnPaint(PaintEventArgs e)
-    {
-        base.OnPaint(e);
-        foreach (var origin in ArrowsManager.GetOrigins())
-        {
-            if (origin.Destination is not null)
-            {
-                LineDrawer.Draw(origin.Location, origin.Destination.Location, this, e.Graphics);
-            }
-        }
     }
 }

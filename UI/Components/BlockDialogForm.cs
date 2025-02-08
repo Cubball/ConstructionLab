@@ -1,4 +1,4 @@
-namespace UI.Controls;
+namespace UI.Components;
 
 internal class BlockDialogForm : Form
 {

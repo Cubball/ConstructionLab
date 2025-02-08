@@ -1,5 +1,4 @@
 using System.Drawing.Drawing2D;
-using UI.Controls;
 using UI.Models;
 using UI.State;
 
@@ -11,6 +10,7 @@ internal class StartBlock : Panel
 
     public StartBlock(Point location)
     {
+        Exists = true;
         Location = location;
         Size = new(300, 200);
         BackColor = Color.White;
@@ -29,6 +29,8 @@ internal class StartBlock : Panel
         nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _nextArrow;
     }
 
+    public static bool Exists { get; private set; }
+
     public void RemoveOrigins()
     {
         ArrowsManager.RemoveOrigin(_nextArrow);
@@ -40,6 +42,7 @@ internal class StartBlock : Panel
         dialog.BlockDeleted += (_, _) =>
         {
             Parent?.Controls.Remove(this);
+            Exists = false;
             RemoveOrigins();
         };
         dialog.ShowDialog();
