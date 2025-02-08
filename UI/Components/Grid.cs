@@ -67,12 +67,12 @@ internal class Grid : DraggablePanel
     {
         for (var x = 0; x < GridSize; x += CellSize)
         {
-            graphics.DrawLine(Pens.Gray, new(x, 0), new(x, GridSize - 1));
+            graphics.DrawLine(Pens.LightGray, new(x, 0), new(x, GridSize - 1));
         }
 
         for (var y = 0; y < GridSize; y += CellSize)
         {
-            graphics.DrawLine(Pens.Gray, new(0, y), new(GridSize - 1, y));
+            graphics.DrawLine(Pens.LightGray, new(0, y), new(GridSize - 1, y));
         }
     }
 }

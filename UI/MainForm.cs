@@ -6,22 +6,64 @@ namespace UI;
 
 internal class MainForm : Form
 {
+    private readonly Panel _sidebarPanel;
+    private readonly ComboBox _diagramSelector;
+    private readonly List<Grid> _diagrams;
+    private Grid? _currentGrid;
+
     public MainForm()
     {
-        Size = new(1000, 1000);
-        var draggablePanel = new Grid
+        Size = new(1200, 1000);
+        _diagrams = [];
+
+        _sidebarPanel = new Panel
         {
-            Location = new(-500, -500),
+            Dock = DockStyle.Right,
+            Width = 200,
+            BackColor = Color.WhiteSmoke,
+            Padding = new Padding(10)
         };
-        Controls.Add(draggablePanel);
+        Controls.Add(_sidebarPanel);
+
+        var deleteDiagramButton = new Button
+        {
+            Text = "Delete Current Diagram",
+            Dock = DockStyle.Top,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        deleteDiagramButton.Click += DeleteDiagramButtonClick;
+        _sidebarPanel.Controls.Add(deleteDiagramButton);
+
+        var newDiagramButton = new Button
+        {
+            Text = "New Diagram",
+            Dock = DockStyle.Top,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        newDiagramButton.Click += NewDiagramButtonClick;
+        _sidebarPanel.Controls.Add(newDiagramButton);
+
+        _diagramSelector = new ComboBox
+        {
+            Dock = DockStyle.Top,
+            DropDownStyle = ComboBoxStyle.DropDownList,
+            Margin = new Padding(0, 0, 0, 10),
+            Size = new(200, 35),
+        };
+        _diagramSelector.SelectedIndexChanged += DiagramSelectorSelectedIndexChanged;
+        _sidebarPanel.Controls.Add(_diagramSelector);
+
+        CreateNewDiagram();
         KeyDown += (_, e) =>
         {
-            if (e.KeyCode == Keys.P)
+            if (e.KeyCode == Keys.P && _currentGrid != null)
             {
                 var controls = new List<Control>();
-                for (var i = 0; i < draggablePanel.Controls.Count; i++)
+                for (var i = 0; i < _currentGrid.Controls.Count; i++)
                 {
-                    controls.Add(draggablePanel.Controls[i]);
+                    controls.Add(_currentGrid.Controls[i]);
                 }
 
                 var startBlock = Converter.Convert(controls);
@@ -29,5 +71,55 @@ internal class MainForm : Form
                 MessageBox.Show(code);
             }
         };
+    }
+
+    private void CreateNewDiagram()
+    {
+        var newGrid = new Grid
+        {
+            Location = new(-5_000, -5_000),
+        };
+        _diagrams.Add(newGrid);
+        _diagramSelector.Items.Add($"Diagram {_diagrams.Count}");
+        _diagramSelector.SelectedIndex = _diagrams.Count - 1;
+    }
+
+    private void DiagramSelectorSelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_currentGrid != null)
+        {
+            Controls.Remove(_currentGrid);
+        }
+
+        _currentGrid = _diagrams[_diagramSelector.SelectedIndex];
+        Controls.Add(_currentGrid);
+        _currentGrid.BringToFront();
+        _sidebarPanel.BringToFront();
+    }
+
+    private void NewDiagramButtonClick(object? sender, EventArgs e)
+    {
+        CreateNewDiagram();
+    }
+
+    private void DeleteDiagramButtonClick(object? sender, EventArgs e)
+    {
+        if (_diagrams.Count <= 1)
+        {
+            MessageBox.Show("Cannot delete the last diagram.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        var currentIndex = _diagramSelector.SelectedIndex;
+        Controls.Remove(_currentGrid);
+        _diagrams.RemoveAt(currentIndex);
+        _diagramSelector.Items.RemoveAt(currentIndex);
+        _diagramSelector.Items.Clear();
+        for (int i = 0; i < _diagrams.Count; i++)
+        {
+            _diagramSelector.Items.Add($"Diagram {i + 1}");
+        }
+
+        _diagramSelector.SelectedIndex = Math.Min(currentIndex, _diagrams.Count - 1);
     }
 }

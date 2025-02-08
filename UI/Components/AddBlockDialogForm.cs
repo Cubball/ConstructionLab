@@ -4,6 +4,8 @@ namespace UI.Components;
 
 public class AddBlockDialogForm : Form
 {
+    private static readonly string[] AvailableBlockTypes = [BlockTypes.Start, BlockTypes.End, BlockTypes.Simple, BlockTypes.Conditional];
+
     public AddBlockDialogForm()
     {
         Text = "Select Block Type";
@@ -27,7 +29,7 @@ public class AddBlockDialogForm : Form
             Size = new Size(265, 25),
             DropDownStyle = ComboBoxStyle.DropDownList
         };
-        select.Items.AddRange(GetBlockTypes());
+        select.Items.AddRange(AvailableBlockTypes);
         select.SelectedIndex = 0;
         Controls.Add(select);
 
@@ -55,14 +57,4 @@ public class AddBlockDialogForm : Form
     }
 
     public event EventHandler<string>? BlockTypeSelected;
-
-    private static string[] GetBlockTypes()
-    {
-        if (StartBlock.Exists)
-        {
-            return [BlockTypes.End, BlockTypes.Simple, BlockTypes.Conditional];
-        }
-
-        return [BlockTypes.Start, BlockTypes.End, BlockTypes.Simple, BlockTypes.Conditional];
-    }
 }

@@ -19,12 +19,23 @@ internal class Converter
 
     private static StartBlock FindStartBlock(List<Control> controls)
     {
+        var found = false;
         foreach (var control in controls)
         {
-            if (control is StartBlockControl startBlock)
+            if (control is not StartBlockControl startBlock)
             {
-                return new();
+                continue;
             }
+
+            if (found)
+            {
+                throw new ConversionException("Multiple start blocks found");
+            }
+        }
+
+        if (found)
+        {
+            return new StartBlock();
         }
 
         throw new ConversionException("Start block not found");
