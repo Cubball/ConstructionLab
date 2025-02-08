@@ -14,6 +14,7 @@ internal static class ArrowsManager
     {
         Origins.Add(origin);
         origin.DestinationChanged += HandleDestinationChanged;
+        ArrowsChanged?.Invoke(null, EventArgs.Empty);
     }
 
     public static void RemoveOrigin(ArrowOrigin origin)

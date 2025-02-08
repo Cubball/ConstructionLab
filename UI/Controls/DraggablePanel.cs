@@ -15,22 +15,17 @@ internal class DraggablePanel : Panel
         ArrowsManager.ArrowsChanged += (_, _) => Invalidate();
 
         // FIXME:
-        var cond = new ConditionalBlock(new(100, 100));
-        Controls.Add(cond);
+        var cond1 = new ConditionalBlock(new(100, 100));
+        var cond2 = new ConditionalBlock(new(100, 700));
+        var cond3 = new ConditionalBlock(new(500, 500));
+        Controls.Add(cond1);
+        Controls.Add(cond2);
+        Controls.Add(cond3);
     }
 
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-    }
-
-    protected override void OnMouseClick(MouseEventArgs e)
-    {
-        base.OnMouseClick(e);
-        if (ArrowsManager.SelectedOrigin is not null)
-        {
-            ArrowsManager.SelectedOrigin.Destination = new(e.Location);
-        }
     }
 
     protected override void OnMouseDown(MouseEventArgs e)
