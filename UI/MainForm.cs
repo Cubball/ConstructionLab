@@ -6,10 +6,10 @@ internal class MainForm : Form
 {
     public MainForm()
     {
-        Size = new(300, 300);
+        Size = new(1000, 1000);
         var draggablePanel = new DraggablePanel
         {
-            Size = new(3_000, 3_000),
+            Size = new(10_000, 10_000),
             Location = new(-500, -500),
         };
         Controls.Add(draggablePanel);

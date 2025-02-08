@@ -2,7 +2,7 @@ namespace UI.Drawing;
 
 internal static class LineDrawer
 {
-    private const int StepInPixels = 50;
+    private const int StepInPixels = 20;
     private const int PaddingInPixels = 10;
 
     public static void Draw(Point from, Point to, Control canvas, Graphics graphics)
@@ -69,6 +69,11 @@ internal static class LineDrawer
 
     private static bool IntersectsChild(Point point, Control canvas, Point to)
     {
+        if (point == to)
+        {
+            return false;
+        }
+
         for (var i = 0; i < canvas.Controls.Count; i++)
         {
             var control = canvas.Controls[i];
@@ -79,7 +84,7 @@ internal static class LineDrawer
                 control.Bounds.Height + (2 * PaddingInPixels));
             if (bounds.Contains(point))
             {
-                return !bounds.Contains(to);
+                return true;
             }
         }
 

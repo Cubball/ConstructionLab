@@ -23,7 +23,7 @@ internal class ConditionalBlock : Panel
             Text = "x",
             Font = new(Font.FontFamily, 14),
             Size = new(30, 30),
-            Location = new(135, 20),
+            Location = new(138, 20),
         };
         Controls.Add(destinationLabel);
         destinationLabel.Click += (_, _) =>
@@ -42,7 +42,7 @@ internal class ConditionalBlock : Panel
             Text = "+",
             Font = new(Font.FontFamily, 14),
             Size = new(30, 30),
-            Location = new(135, 155),
+            Location = new(137, 155),
         };
         Controls.Add(addTrueLabel);
         addTrueLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = _trueArrow;
