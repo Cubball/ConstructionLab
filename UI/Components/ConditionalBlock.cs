@@ -15,7 +15,7 @@ internal class ConditionalBlock : Panel
         BackColor = Color.White;
 
         Destination = new(new(Location.X + 150, Location.Y));
-        ArrowsManager.AddDestination(Destination, this);
+        ArrowsManager.CurrentInstance.AddDestination(Destination, this);
         var destinationLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -27,9 +27,9 @@ internal class ConditionalBlock : Panel
         Controls.Add(destinationLabel);
         destinationLabel.Click += (_, _) =>
         {
-            if (ArrowsManager.SelectedOrigin is not null)
+            if (ArrowsManager.CurrentInstance.SelectedOrigin is not null)
             {
-                ArrowsManager.SelectedOrigin.Destination = Destination;
+                ArrowsManager.CurrentInstance.SelectedOrigin.Destination = Destination;
             }
         };
 
@@ -44,7 +44,7 @@ internal class ConditionalBlock : Panel
         Controls.Add(_operationLabel);
 
         TrueArrow = new(new(Location.X + 150, Location.Y + 200));
-        ArrowsManager.AddOrigin(TrueArrow);
+        ArrowsManager.CurrentInstance.AddOrigin(TrueArrow);
         var addTrueLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -54,10 +54,10 @@ internal class ConditionalBlock : Panel
             Location = new(135, 155),
         };
         Controls.Add(addTrueLabel);
-        addTrueLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = TrueArrow;
+        addTrueLabel.Click += (_, _) => ArrowsManager.CurrentInstance.SelectedOrigin = TrueArrow;
 
         FalseArrow = new(new(Location.X + 300, Location.Y + 100));
-        ArrowsManager.AddOrigin(FalseArrow);
+        ArrowsManager.CurrentInstance.AddOrigin(FalseArrow);
         var addFalseLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -67,7 +67,7 @@ internal class ConditionalBlock : Panel
             Location = new(245, 85),
         };
         Controls.Add(addFalseLabel);
-        addFalseLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = FalseArrow;
+        addFalseLabel.Click += (_, _) => ArrowsManager.CurrentInstance.SelectedOrigin = FalseArrow;
     }
 
     public string Operation { get; set; } = string.Empty;
@@ -80,8 +80,8 @@ internal class ConditionalBlock : Panel
 
     public void RemoveOrigins()
     {
-        ArrowsManager.RemoveOrigin(TrueArrow);
-        ArrowsManager.RemoveOrigin(FalseArrow);
+        ArrowsManager.CurrentInstance.RemoveOrigin(TrueArrow);
+        ArrowsManager.CurrentInstance.RemoveOrigin(FalseArrow);
     }
 
     protected override void OnMouseClick(MouseEventArgs e)

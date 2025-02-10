@@ -13,7 +13,7 @@ internal class EndBlock : Panel
         BackColor = Color.White;
 
         Destination = new(new(Location.X + 150, Location.Y));
-        ArrowsManager.AddDestination(Destination, this);
+        ArrowsManager.CurrentInstance.AddDestination(Destination, this);
         var destinationLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -25,9 +25,9 @@ internal class EndBlock : Panel
         Controls.Add(destinationLabel);
         destinationLabel.Click += (_, _) =>
         {
-            if (ArrowsManager.SelectedOrigin is not null)
+            if (ArrowsManager.CurrentInstance.SelectedOrigin is not null)
             {
-                ArrowsManager.SelectedOrigin.Destination = Destination;
+                ArrowsManager.CurrentInstance.SelectedOrigin.Destination = Destination;
             }
         };
 
@@ -50,7 +50,7 @@ internal class EndBlock : Panel
         dialog.BlockDeleted += (_, _) =>
         {
             Parent?.Controls.Remove(this);
-            ArrowsManager.RemoveDestination(Destination);
+            ArrowsManager.CurrentInstance.RemoveDestination(Destination);
         };
         dialog.ShowDialog();
     }

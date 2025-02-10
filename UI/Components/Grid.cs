@@ -17,7 +17,7 @@ internal class Grid : DraggablePanel
         var n = GridSize / CellSize;
         _controls = new Control[n, n];
         Size = new(GridSize, GridSize);
-        ArrowsManager.ArrowsChanged += (_, _) => Invalidate();
+        ArrowsManager.CurrentInstance.ArrowsChanged += (_, _) => Invalidate();
     }
 
     protected override void OnMouseDoubleClick(MouseEventArgs e)
@@ -54,7 +54,7 @@ internal class Grid : DraggablePanel
     {
         base.OnPaint(e);
         PaintGrid(e.Graphics);
-        foreach (var origin in ArrowsManager.GetOrigins())
+        foreach (var origin in ArrowsManager.CurrentInstance.GetOrigins())
         {
             if (origin.Destination is not null)
             {

@@ -81,7 +81,7 @@ internal class Converter
                         throw new ConversionException("Start block should have a next block");
                     }
 
-                    var startBlockNext = ArrowsManager.GetDestination(startBlockControl.NextArrow.Destination)
+                    var startBlockNext = ArrowsManager.CurrentInstance.GetDestination(startBlockControl.NextArrow.Destination)
                         ?? throw new ConversionException("Next block not found");
                     startBlock.FirstBlock = blocks[startBlockNext];
                     break;
@@ -103,7 +103,7 @@ internal class Converter
                     }
 
 
-                    var simpleBlockNext = ArrowsManager.GetDestination(simpleBlock.NextArrow.Destination)
+                    var simpleBlockNext = ArrowsManager.CurrentInstance.GetDestination(simpleBlock.NextArrow.Destination)
                         ?? throw new ConversionException("Next block not found");
                     (blocks[simpleBlock] as SimpleBlock)!.Next = blocks[simpleBlockNext];
                     break;
@@ -123,9 +123,9 @@ internal class Converter
                         throw new ConversionException("Conditional block should have a block before it");
                     }
 
-                    var conditionalBlockTrue = ArrowsManager.GetDestination(conditionalBlock.TrueArrow.Destination)
+                    var conditionalBlockTrue = ArrowsManager.CurrentInstance.GetDestination(conditionalBlock.TrueArrow.Destination)
                         ?? throw new ConversionException("True block not found");
-                    var conditionalBlockFalse = ArrowsManager.GetDestination(conditionalBlock.FalseArrow.Destination)
+                    var conditionalBlockFalse = ArrowsManager.CurrentInstance.GetDestination(conditionalBlock.FalseArrow.Destination)
                         ?? throw new ConversionException("False block not found");
                     (blocks[conditionalBlock] as ConditionalBlock)!.True = blocks[conditionalBlockTrue];
                     (blocks[conditionalBlock] as ConditionalBlock)!.False = blocks[conditionalBlockFalse];

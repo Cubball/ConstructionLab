@@ -14,7 +14,7 @@ internal class StartBlock : Panel
         BackColor = Color.White;
 
         NextArrow = new(new(Location.X + 150, Location.Y + 200));
-        ArrowsManager.AddOrigin(NextArrow);
+        ArrowsManager.CurrentInstance.AddOrigin(NextArrow);
         var nextLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -24,7 +24,7 @@ internal class StartBlock : Panel
             Location = new(135, 155),
         };
         Controls.Add(nextLabel);
-        nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = NextArrow;
+        nextLabel.Click += (_, _) => ArrowsManager.CurrentInstance.SelectedOrigin = NextArrow;
 
         var label = new Label
         {
@@ -43,7 +43,7 @@ internal class StartBlock : Panel
 
     public void RemoveOrigins()
     {
-        ArrowsManager.RemoveOrigin(NextArrow);
+        ArrowsManager.CurrentInstance.RemoveOrigin(NextArrow);
     }
 
     protected override void OnMouseClick(MouseEventArgs e)

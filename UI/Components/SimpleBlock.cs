@@ -15,7 +15,7 @@ internal class SimpleBlock : Panel
         BackColor = Color.White;
 
         Destination = new(new(Location.X + 150, Location.Y));
-        ArrowsManager.AddDestination(Destination, this);
+        ArrowsManager.CurrentInstance.AddDestination(Destination, this);
         var destinationLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -27,9 +27,9 @@ internal class SimpleBlock : Panel
         Controls.Add(destinationLabel);
         destinationLabel.Click += (_, _) =>
         {
-            if (ArrowsManager.SelectedOrigin is not null)
+            if (ArrowsManager.CurrentInstance.SelectedOrigin is not null)
             {
-                ArrowsManager.SelectedOrigin.Destination = Destination;
+                ArrowsManager.CurrentInstance.SelectedOrigin.Destination = Destination;
             }
         };
 
@@ -44,7 +44,7 @@ internal class SimpleBlock : Panel
         Controls.Add(_operationLabel);
 
         NextArrow = new(new(Location.X + 150, Location.Y + 200));
-        ArrowsManager.AddOrigin(NextArrow);
+        ArrowsManager.CurrentInstance.AddOrigin(NextArrow);
         var nextLabel = new Label
         {
             TextAlign = ContentAlignment.MiddleCenter,
@@ -54,7 +54,7 @@ internal class SimpleBlock : Panel
             Location = new(135, 155),
         };
         Controls.Add(nextLabel);
-        nextLabel.Click += (_, _) => ArrowsManager.SelectedOrigin = NextArrow;
+        nextLabel.Click += (_, _) => ArrowsManager.CurrentInstance.SelectedOrigin = NextArrow;
     }
 
     public string Operation { get; set; } = string.Empty;
@@ -65,7 +65,7 @@ internal class SimpleBlock : Panel
 
     public void RemoveOrigins()
     {
-        ArrowsManager.RemoveOrigin(NextArrow);
+        ArrowsManager.CurrentInstance.RemoveOrigin(NextArrow);
     }
 
     protected override void OnMouseClick(MouseEventArgs e)

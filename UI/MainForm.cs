@@ -75,6 +75,7 @@ internal class MainForm : Form
 
     private void CreateNewDiagram()
     {
+        ArrowsManager.AddInstance();
         var newGrid = new Grid
         {
             Location = new(-5_000, -5_000),
@@ -91,6 +92,7 @@ internal class MainForm : Form
             Controls.Remove(_currentGrid);
         }
 
+        ArrowsManager.SetCurrentInstance(_diagramSelector.SelectedIndex);
         _currentGrid = _diagrams[_diagramSelector.SelectedIndex];
         Controls.Add(_currentGrid);
         _currentGrid.BringToFront();
@@ -110,6 +112,7 @@ internal class MainForm : Form
             return;
         }
 
+        ArrowsManager.RemoveInstance(_diagramSelector.SelectedIndex);
         var currentIndex = _diagramSelector.SelectedIndex;
         Controls.Remove(_currentGrid);
         _diagrams.RemoveAt(currentIndex);
@@ -121,5 +124,6 @@ internal class MainForm : Form
         }
 
         _diagramSelector.SelectedIndex = Math.Min(currentIndex, _diagrams.Count - 1);
+        ArrowsManager.SetCurrentInstance(_diagramSelector.SelectedIndex);
     }
 }
