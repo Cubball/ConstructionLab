@@ -31,6 +31,8 @@ internal class Converter
             {
                 throw new ConversionException("Multiple start blocks found");
             }
+
+            found = true;
         }
 
         if (found)

@@ -25,6 +25,32 @@ internal class MainForm : Form
         };
         Controls.Add(_sidebarPanel);
 
+        var generateCodeButton = new Button
+        {
+            Text = "Generate Code",
+            Dock = DockStyle.Top,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        generateCodeButton.Click += (_, _) =>
+        {
+            if (_currentGrid == null)
+            {
+                return;
+            }
+
+            var controls = new List<Control>();
+            for (var i = 0; i < _currentGrid.Controls.Count; i++)
+            {
+                controls.Add(_currentGrid.Controls[i]);
+            }
+
+            var startBlock = Converter.Convert(controls);
+            var code = CodeGenerator.Generate([startBlock]);
+            MessageBox.Show(code);
+        };
+        _sidebarPanel.Controls.Add(generateCodeButton);
+
         var deleteDiagramButton = new Button
         {
             Text = "Delete Current Diagram",
@@ -56,21 +82,6 @@ internal class MainForm : Form
         _sidebarPanel.Controls.Add(_diagramSelector);
 
         CreateNewDiagram();
-        KeyDown += (_, e) =>
-        {
-            if (e.KeyCode == Keys.P && _currentGrid != null)
-            {
-                var controls = new List<Control>();
-                for (var i = 0; i < _currentGrid.Controls.Count; i++)
-                {
-                    controls.Add(_currentGrid.Controls[i]);
-                }
-
-                var startBlock = Converter.Convert(controls);
-                var code = CodeGenerator.Generate([startBlock]);
-                MessageBox.Show(code);
-            }
-        };
     }
 
     private void CreateNewDiagram()
@@ -83,6 +94,7 @@ internal class MainForm : Form
         _diagrams.Add(newGrid);
         _diagramSelector.Items.Add($"Diagram {_diagrams.Count}");
         _diagramSelector.SelectedIndex = _diagrams.Count - 1;
+        _currentGrid = newGrid;
     }
 
     private void DiagramSelectorSelectedIndexChanged(object? sender, EventArgs e)
@@ -125,5 +137,6 @@ internal class MainForm : Form
 
         _diagramSelector.SelectedIndex = Math.Min(currentIndex, _diagrams.Count - 1);
         ArrowsManager.SetCurrentInstance(_diagramSelector.SelectedIndex);
+        _currentGrid = _diagrams[_diagramSelector.SelectedIndex];
     }
 }
