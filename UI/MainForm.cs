@@ -1,5 +1,6 @@
 using Core.CodeGeneration;
 using Core.Parsing;
+using Core.Serialization;
 using Core.Validation;
 using UI.Components;
 using UI.Controls;
@@ -67,6 +68,16 @@ internal class MainForm : Form
         };
         _diagramSelector.SelectedIndexChanged += DiagramSelectorSelectedIndexChanged;
         _sidebarPanel.Controls.Add(_diagramSelector);
+
+        var exportButton = new Button
+        {
+            Text = "Export Diagram",
+            Dock = DockStyle.Bottom,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        exportButton.Click += ExportButtonClick;
+        _sidebarPanel.Controls.Add(exportButton);
 
         CreateNewDiagram();
     }
@@ -159,6 +170,59 @@ internal class MainForm : Form
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
         catch (ParsingException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void ExportButtonClick(object? sender, EventArgs e)
+    {
+        try
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            saveFileDialog.ShowDialog();
+            if (saveFileDialog.FileName == "")
+            {
+                return;
+            }
+
+            var currentIndex = _diagramSelector.SelectedIndex;
+            var startBlocks = new List<Core.Models.StartBlock>();
+            for (var i = 0; i < _diagrams.Count; i++)
+            {
+                var controls = new List<Control>();
+                for (var j = 0; j < _diagrams[i].Controls.Count; j++)
+                {
+                    controls.Add(_diagrams[i].Controls[j]);
+                }
+
+                ArrowsManager.SetCurrentInstance(i);
+                startBlocks.Add(Converter.Convert(controls));
+            }
+
+            ArrowsManager.SetCurrentInstance(currentIndex);
+            var serialized = Serializer.Serialize(startBlocks);
+            File.WriteAllText(saveFileDialog.FileName, serialized);
+            MessageBox.Show("Diagram exported successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (ConversionException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (ValidationException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (ParsingException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (SerializationException ex)
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
