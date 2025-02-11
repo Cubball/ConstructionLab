@@ -68,6 +68,12 @@ internal class SimpleBlock : Panel
         ArrowsManager.CurrentInstance.RemoveOrigin(NextArrow);
     }
 
+    public void SetOperation(string operation)
+    {
+        Operation = operation;
+        _operationLabel.Text = operation;
+    }
+
     protected override void OnMouseClick(MouseEventArgs e)
     {
         using var dialog = new BlockDialogForm(initialText: Operation);
@@ -86,11 +92,5 @@ internal class SimpleBlock : Panel
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
         using var pen = new Pen(Color.Black, 3);
         e.Graphics.DrawRectangle(pen, new(new(0, 0), Size));
-    }
-
-    private void SetOperation(string operation)
-    {
-        Operation = operation;
-        _operationLabel.Text = operation;
     }
 }

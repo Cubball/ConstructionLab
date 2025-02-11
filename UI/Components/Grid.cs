@@ -1,3 +1,4 @@
+using Core.Models;
 using UI.Controls;
 using UI.Drawing;
 using UI.Models;
@@ -18,6 +19,10 @@ internal class Grid : DraggablePanel
         _controls = new Control[n, n];
         Size = new(GridSize, GridSize);
         ArrowsManager.CurrentInstance.ArrowsChanged += (_, _) => Invalidate();
+    }
+
+    public void SetBlock(int x, int y)
+    {
     }
 
     protected override void OnMouseDoubleClick(MouseEventArgs e)

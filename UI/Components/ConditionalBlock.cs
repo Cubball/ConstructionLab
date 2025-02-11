@@ -84,6 +84,12 @@ internal class ConditionalBlock : Panel
         ArrowsManager.CurrentInstance.RemoveOrigin(FalseArrow);
     }
 
+    public void SetOperation(string operation)
+    {
+        Operation = operation;
+        _operationLabel.Text = operation;
+    }
+
     protected override void OnMouseClick(MouseEventArgs e)
     {
         using var dialog = new BlockDialogForm(initialText: Operation);
@@ -111,11 +117,5 @@ internal class ConditionalBlock : Panel
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
         using var pen = new Pen(Color.Black, 3);
         e.Graphics.DrawPath(pen, path);
-    }
-
-    private void SetOperation(string operation)
-    {
-        Operation = operation;
-        _operationLabel.Text = operation;
     }
 }

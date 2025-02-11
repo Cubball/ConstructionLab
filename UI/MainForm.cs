@@ -1,7 +1,5 @@
 using Core.CodeGeneration;
-using Core.Parsing;
 using Core.Serialization;
-using Core.Validation;
 using UI.Components;
 using UI.Controls;
 using UI.State;
@@ -78,6 +76,16 @@ internal class MainForm : Form
         };
         exportButton.Click += ExportButtonClick;
         _sidebarPanel.Controls.Add(exportButton);
+
+        var importButton = new Button
+        {
+            Text = "Import Diagram",
+            Dock = DockStyle.Bottom,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        importButton.Click += ImportButtonClick;
+        _sidebarPanel.Controls.Add(importButton);
 
         CreateNewDiagram();
     }
@@ -161,15 +169,7 @@ internal class MainForm : Form
             var dialog = new TextInputForm(code);
             dialog.ShowDialog();
         }
-        catch (ConversionException ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        catch (ValidationException ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        catch (ParsingException ex)
+        catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
@@ -210,19 +210,55 @@ internal class MainForm : Form
             File.WriteAllText(saveFileDialog.FileName, serialized);
             MessageBox.Show("Diagram exported successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        catch (ConversionException ex)
+        catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
-        catch (ValidationException ex)
+    }
+
+    private void ImportButtonClick(object? sender, EventArgs e)
+    {
+        try
         {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true,
+            };
+            openFileDialog.ShowDialog();
+            if (openFileDialog.FileName == "")
+            {
+                return;
+            }
+
+            var serialized = File.ReadAllText(openFileDialog.FileName);
+            var startBlocks = Serializer.Deserialize(serialized);
+            var diagramCount = _diagrams.Count;
+            for (var i = 0; i < startBlocks.Count; i++)
+            {
+                CreateNewDiagram();
+                var controls = Converter.Convert(startBlocks[i]);
+                for (var j = 0; j < controls.Count; j++)
+                {
+                    _currentGrid!.Controls.Add(controls[j]);
+                }
+
+                _currentGrid!.Location = new(0, 0);
+            }
+
+            for (var i = 0; i < diagramCount; i++)
+            {
+                _diagramSelector.SelectedIndex = 0;
+                DiagramSelectorSelectedIndexChanged(null, EventArgs.Empty);
+                DeleteDiagramButtonClick(null, EventArgs.Empty);
+            }
+
+            _diagramSelector.SelectedIndex = 0;
+            DiagramSelectorSelectedIndexChanged(null, EventArgs.Empty);
+            MessageBox.Show("Diagram imported successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        catch (ParsingException ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        catch (SerializationException ex)
+        catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }

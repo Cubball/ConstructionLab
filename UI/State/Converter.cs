@@ -1,5 +1,6 @@
 using Core.Models;
 using Core.Parsing;
+using UI.Models;
 using ConditionalBlockControl = UI.Components.ConditionalBlock;
 using EndBlockControl = UI.Components.EndBlock;
 using SimpleBlockControl = UI.Components.SimpleBlock;
@@ -15,6 +16,67 @@ internal class Converter
         var blocks = MapBlocks(controls);
         MapConnections(controls, startBlock, blocks);
         return startBlock;
+    }
+
+    public static List<Control> Convert(StartBlock startBlock)
+    {
+        var queue = new Queue<(ArrowOrigin, IBlock, Point)>();
+        var startBlockControl = new StartBlockControl(new(100, 150));
+        var seen = new Dictionary<IBlock, Control>();
+        queue.Enqueue((startBlockControl.NextArrow, startBlock.FirstBlock, new(100, 650)));
+        var result = new List<Control> { startBlockControl };
+        while (queue.Count > 0)
+        {
+            var (origin, current, location) = queue.Dequeue();
+            ArrowsManager.CurrentInstance.AddOrigin(origin);
+            if (seen.TryGetValue(current, out var control))
+            {
+                origin.Destination = control switch
+                {
+                    SimpleBlockControl simpleBlock => simpleBlock.Destination,
+                    ConditionalBlockControl conditionalBlock => conditionalBlock.Destination,
+                    EndBlockControl endBlock => endBlock.Destination,
+                    _ => throw new ConversionException($"Unknown block type: {control.GetType().Name}"),
+                };
+                continue;
+            }
+
+            var x = location.X;
+            var y = location.Y;
+            switch (current)
+            {
+                case EndBlock:
+                    var endBlockControl = new EndBlockControl(new(x, y));
+                    ArrowsManager.CurrentInstance.AddDestination(endBlockControl.Destination, endBlockControl);
+                    origin.Destination = endBlockControl.Destination;
+                    result.Add(endBlockControl);
+                    seen.Add(current, endBlockControl);
+                    break;
+                case SimpleBlock simpleBlock:
+                    var simpleBlockControl = new SimpleBlockControl(new(x, y));
+                    ArrowsManager.CurrentInstance.AddDestination(simpleBlockControl.Destination, simpleBlockControl);
+                    origin.Destination = simpleBlockControl.Destination;
+                    simpleBlockControl.SetOperation(ToString(simpleBlock.Statement));
+                    queue.Enqueue((simpleBlockControl.NextArrow, simpleBlock.Next, new(x, y + 500)));
+                    result.Add(simpleBlockControl);
+                    seen.Add(current, simpleBlockControl);
+                    break;
+                case ConditionalBlock conditionalBlock:
+                    var conditionalBlockControl = new ConditionalBlockControl(new(x, y));
+                    ArrowsManager.CurrentInstance.AddDestination(conditionalBlockControl.Destination, conditionalBlockControl);
+                    origin.Destination = conditionalBlockControl.Destination;
+                    conditionalBlockControl.SetOperation(ToString(conditionalBlock.Condition));
+                    queue.Enqueue((conditionalBlockControl.TrueArrow, conditionalBlock.True, new(x, y + 500)));
+                    queue.Enqueue((conditionalBlockControl.FalseArrow, conditionalBlock.False, new(x + 500, y)));
+                    result.Add(conditionalBlockControl);
+                    seen.Add(current, conditionalBlockControl);
+                    break;
+                default:
+                    throw new ConversionException($"Unknown block type: {current.GetType().Name}");
+            }
+        }
+
+        return result;
     }
 
     private static StartBlock FindStartBlock(List<Control> controls)
@@ -136,5 +198,27 @@ internal class Converter
                     throw new ConversionException($"Unknown block type: {control.GetType().Name}");
             }
         }
+    }
+
+    private static string ToString(IStatement statement)
+    {
+        return statement switch
+        {
+            VariableToVariableAssignmentStatement varToVar => $"{varToVar.LHS} = {varToVar.RHS}",
+            LiteralToVariableAssignmentStatement litToVar => $"{litToVar.Variable} = {litToVar.Literal}",
+            PrintToStdoutStatement print => $"PRINT {print.Variable}",
+            ReadFromStdinStatement read => $"INPUT {read.Variable}",
+            _ => throw new ConversionException($"Unknown statement type: {statement.GetType().Name}")
+        };
+    }
+
+    private static string ToString(IBooleanExpression expression)
+    {
+        return expression switch
+        {
+            LessBooleanExpression less => $"{less.Variable} < {less.Literal}",
+            EqualsBooleanExpression equals => $"{equals.Variable} == {equals.Literal}",
+            _ => throw new ConversionException($"Unknown expression type: {expression.GetType().Name}")
+        };
     }
 }
