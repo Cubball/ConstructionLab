@@ -10,7 +10,7 @@ internal class Grid : DraggablePanel
     private const int GridSize = 10_000;
     private const int CellSize = 500;
 
-    private readonly Control[,] _controls;
+    private readonly Control?[,] _controls;
 
     public Grid()
     {
@@ -24,8 +24,10 @@ internal class Grid : DraggablePanel
     {
         var x = e.X / CellSize;
         var y = e.Y / CellSize;
+        RemoveBlockIfNotInControls(x, y);
         if (_controls[x, y] is not null)
         {
+            var control = _controls[x, y];
             return;
         }
 
@@ -73,6 +75,25 @@ internal class Grid : DraggablePanel
         for (var y = 0; y < GridSize; y += CellSize)
         {
             graphics.DrawLine(Pens.LightGray, new(0, y), new(GridSize - 1, y));
+        }
+    }
+
+    private void RemoveBlockIfNotInControls(int x, int y)
+    {
+        var control = _controls[x, y];
+        var found = false;
+        for (var i = 0; i < Controls.Count; i++)
+        {
+            if (Controls[i] == control)
+            {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            _controls[x, y] = null;
         }
     }
 }

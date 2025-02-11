@@ -1,5 +1,8 @@
 using Core.CodeGeneration;
+using Core.Parsing;
+using Core.Validation;
 using UI.Components;
+using UI.Controls;
 using UI.State;
 
 namespace UI;
@@ -32,23 +35,7 @@ internal class MainForm : Form
             Margin = new Padding(0, 5, 0, 5),
             Size = new(200, 35),
         };
-        generateCodeButton.Click += (_, _) =>
-        {
-            if (_currentGrid == null)
-            {
-                return;
-            }
-
-            var controls = new List<Control>();
-            for (var i = 0; i < _currentGrid.Controls.Count; i++)
-            {
-                controls.Add(_currentGrid.Controls[i]);
-            }
-
-            var startBlock = Converter.Convert(controls);
-            var code = CodeGenerator.Generate([startBlock]);
-            MessageBox.Show(code);
-        };
+        generateCodeButton.Click += GenerateCodeButtonClick;
         _sidebarPanel.Controls.Add(generateCodeButton);
 
         var deleteDiagramButton = new Button
@@ -138,5 +125,42 @@ internal class MainForm : Form
         _diagramSelector.SelectedIndex = Math.Min(currentIndex, _diagrams.Count - 1);
         ArrowsManager.SetCurrentInstance(_diagramSelector.SelectedIndex);
         _currentGrid = _diagrams[_diagramSelector.SelectedIndex];
+    }
+
+    private void GenerateCodeButtonClick(object? sender, EventArgs e)
+    {
+        try
+        {
+            var currentIndex = _diagramSelector.SelectedIndex;
+            var startBlocks = new List<Core.Models.StartBlock>();
+            for (var i = 0; i < _diagrams.Count; i++)
+            {
+                var controls = new List<Control>();
+                for (var j = 0; j < _diagrams[i].Controls.Count; j++)
+                {
+                    controls.Add(_diagrams[i].Controls[j]);
+                }
+
+                ArrowsManager.SetCurrentInstance(i);
+                startBlocks.Add(Converter.Convert(controls));
+            }
+
+            ArrowsManager.SetCurrentInstance(currentIndex);
+            var code = CodeGenerator.Generate(startBlocks);
+            var dialog = new TextInputForm(code);
+            dialog.ShowDialog();
+        }
+        catch (ConversionException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (ValidationException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        catch (ParsingException ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }
