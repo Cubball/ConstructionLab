@@ -4,8 +4,8 @@ internal class TextInputForm : Form
 {
     public TextInputForm(string text)
     {
-        Text = "Generated Code";
-        Size = new(600, 300);
+        Text = "Result";
+        Size = new(1000, 500);
         var textBox = new TextBox
         {
             Multiline = true,

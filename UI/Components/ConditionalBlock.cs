@@ -98,6 +98,7 @@ internal class ConditionalBlock : Panel
         {
             Parent?.Controls.Remove(this);
             RemoveOrigins();
+            ArrowsManager.CurrentInstance.RemoveDestination(Destination);
         };
         dialog.ShowDialog();
     }

@@ -13,14 +13,29 @@ internal record struct ThreadsState(List<InterpretingVisitor> Visitor, MockStdou
 
 public static class Tester
 {
-    public static async Task<TestingResult> Test(
+    public static string TestSingle(
+        List<StartBlock> startBlocks,
+        List<string> stdin,
+        CancellationToken cancellationToken = default)
+    {
+        Validator.Validate(startBlocks);
+        var mockStdout = new MockStdout();
+        var mockStdin = new MockStdin(stdin);
+        Interpreter.Run(startBlocks, mockStdout, mockStdin, cancellationToken);
+        var semaphore = new SemaphoreSlim(0);
+        Interpreter.ExecutionFinished += (_, _) => semaphore.Release();
+        semaphore.Wait(cancellationToken);
+        return string.Join(Environment.NewLine, mockStdout.Lines);
+    }
+
+    public static TestingResult Test(
         List<StartBlock> startBlocks,
         List<string> stdout,
         List<string> stdin,
         CancellationToken cancellationToken = default)
     {
         Validator.Validate(startBlocks);
-        var executionResults = await Task.Run(() => Test(startBlocks, stdin, cancellationToken));
+        var executionResults = Test(startBlocks, stdin, cancellationToken);
         return AnalyzeExecutionResults(executionResults, stdout);
     }
 

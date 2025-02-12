@@ -27,6 +27,16 @@ internal class MainForm : Form
         };
         Controls.Add(_sidebarPanel);
 
+        var testingButton = new Button
+        {
+            Text = "Run Tests",
+            Dock = DockStyle.Top,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        testingButton.Click += TestingButtonClick;
+        _sidebarPanel.Controls.Add(testingButton);
+
         var generateCodeButton = new Button
         {
             Text = "Generate Code",
@@ -257,6 +267,34 @@ internal class MainForm : Form
             _diagramSelector.SelectedIndex = 0;
             DiagramSelectorSelectedIndexChanged(null, EventArgs.Empty);
             MessageBox.Show("Diagram imported successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void TestingButtonClick(object? sender, EventArgs e)
+    {
+        try
+        {
+            var currentIndex = _diagramSelector.SelectedIndex;
+            var startBlocks = new List<Core.Models.StartBlock>();
+            for (var i = 0; i < _diagrams.Count; i++)
+            {
+                var controls = new List<Control>();
+                for (var j = 0; j < _diagrams[i].Controls.Count; j++)
+                {
+                    controls.Add(_diagrams[i].Controls[j]);
+                }
+
+                ArrowsManager.SetCurrentInstance(i);
+                startBlocks.Add(Converter.Convert(controls));
+            }
+
+            ArrowsManager.SetCurrentInstance(currentIndex);
+            var form = new TestingForm(startBlocks);
+            form.ShowDialog();
         }
         catch (Exception ex)
         {

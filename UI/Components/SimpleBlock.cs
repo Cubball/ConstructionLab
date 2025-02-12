@@ -81,6 +81,7 @@ internal class SimpleBlock : Panel
         dialog.BlockDeleted += (_, _) =>
         {
             Parent?.Controls.Remove(this);
+            ArrowsManager.CurrentInstance.RemoveDestination(Destination);
             RemoveOrigins();
         };
         dialog.ShowDialog();

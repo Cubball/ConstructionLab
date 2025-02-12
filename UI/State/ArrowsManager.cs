@@ -47,6 +47,7 @@ internal class ArrowsManager
     public void RemoveOrigin(ArrowOrigin origin)
     {
         _origins.Remove(origin);
+        origin.Destination = null;
         origin.DestinationChanged -= HandleDestinationChanged;
         ArrowsChanged?.Invoke(null, EventArgs.Empty);
     }
