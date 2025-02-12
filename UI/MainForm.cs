@@ -97,6 +97,22 @@ internal class MainForm : Form
         importButton.Click += ImportButtonClick;
         _sidebarPanel.Controls.Add(importButton);
 
+        var helpButton = new Button
+        {
+            Text = "Help",
+            Dock = DockStyle.Bottom,
+            Margin = new Padding(0, 5, 0, 5),
+            Size = new(200, 35),
+        };
+        helpButton.Click += static (sender, args) => MessageBox.Show(
+            """
+            To add a new block, double click on the grid.
+            To connect two blocks, click on the first block's '+' and then click on the second block's '×'.
+            The arrow going down from a conditional block represents 'true', while the arrow going to the right - 'false'.
+            To delete or edit a block, click on the block.
+            """, "Help", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        _sidebarPanel.Controls.Add(helpButton);
+
         CreateNewDiagram();
     }
 
