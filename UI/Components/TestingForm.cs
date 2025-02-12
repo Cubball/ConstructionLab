@@ -103,12 +103,27 @@ internal class TestingForm : Form
         _cancelButton.Visible = true;
         _runButton.Visible = false;
         var runAll = _runAllCheckBox.Checked;
-        var stdin = _stdinInput.Text.Split(Separators, StringSplitOptions.None).ToList();
-        var stdout = _stdoutInput.Text.Split(Separators, StringSplitOptions.None).ToList();
+        var stdin = _stdinInput.Text
+            .Split(Separators, StringSplitOptions.None)
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .ToList();
+        var stdout = _stdoutInput.Text
+            .Split(Separators, StringSplitOptions.None)
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .ToList();
         new Thread(() =>
         {
             if (runAll)
             {
+                var form = new TestingResultForm(
+                    Tester.Test(_startBlocks, stdout, stdin, _cts.Token)
+                );
+                form.ShowDialog();
+                Invoke(new Action(() =>
+                {
+                    _cancelButton.Visible = false;
+                    _runButton.Visible = true;
+                }));
             }
             else
             {
