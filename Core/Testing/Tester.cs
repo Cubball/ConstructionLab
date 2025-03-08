@@ -117,13 +117,10 @@ public static class Tester
             }
         }
 
-        for (var i = 1; i < maxExecutedSteps; i++)
+        for (var i = 2; i <= maxExecutedSteps; i++)
         {
-            for (var j = i + 1; j <= maxExecutedSteps; j++)
-            {
-                totalCounts[j] = totalCounts.GetValueOrDefault(j) + totalCounts.GetValueOrDefault(i);
-                successCounts[j] = successCounts.GetValueOrDefault(j) + successCounts.GetValueOrDefault(i);
-            }
+            totalCounts[i] = totalCounts.GetValueOrDefault(i) + totalCounts.GetValueOrDefault(i - 1);
+            successCounts[i] = successCounts.GetValueOrDefault(i) + successCounts.GetValueOrDefault(i - 1);
         }
 
         var result = new Dictionary<int, double>();
